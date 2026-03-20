@@ -6,6 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
+    "db:migrate": "wrangler d1 migrations apply oidc-idp",
+    "db:migrate:local": "wrangler d1 migrations apply oidc-idp --local",
+    "seed": "tsx scripts/seed.ts",
     "deploy": "wrangler deploy",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
@@ -39,12 +42,14 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.13.3",
     "@cloudflare/workers-types": "^4.20260317.1",
+    "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.57.1",
     "@typescript-eslint/parser": "^8.57.1",
     "@vitest/coverage-v8": "^4.1.0",
     "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0",
     "wrangler": "^4.76.0"

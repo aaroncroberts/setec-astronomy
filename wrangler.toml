@@ -34,7 +34,12 @@ ISSUER = "https://idp.example.com"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Local development overrides
+# wrangler dev uses local SQLite (.wrangler/state/) automatically.
+# Secrets are loaded from .dev.vars (see .dev.vars.example).
 # ──────────────────────────────────────────────────────────────────────────────
 [dev]
 port = 8787
 local_protocol = "http"
+
+[env.local.vars]
+ISSUER = "http://localhost:8787"
