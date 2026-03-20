@@ -38,7 +38,7 @@ async function post(path: string, body: unknown): Promise<{ ok: boolean; data: u
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      authorization: `Bearer ${adminKey}`,
+      'x-admin-api-key': adminKey,
     },
     body: JSON.stringify(body),
   });
@@ -86,9 +86,9 @@ async function main() {
     process.exit(1);
   }
 
-  const c = clientRes.data as { id: string; client_secret: string };
+  const c = clientRes.data as { client_id: string; client_secret: string };
   console.log(`  ✓ Client created: "${DEFAULT_CLIENT_NAME}"`);
-  console.log(`    client_id:     ${c.id}`);
+  console.log(`    client_id:     ${c.client_id}`);
   console.log(`    client_secret: ${c.client_secret}`);
   console.log(`    redirect_uri:  ${DEFAULT_REDIRECT_URI}`);
 
@@ -97,7 +97,7 @@ async function main() {
   const challenge = await generateChallenge(verifier);
 
   const params = new URLSearchParams({
-    client_id: c.id,
+    client_id: c.client_id,
     redirect_uri: DEFAULT_REDIRECT_URI,
     response_type: 'code',
     scope: 'openid email profile',

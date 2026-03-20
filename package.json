@@ -9,6 +9,7 @@
     "db:migrate": "wrangler d1 migrations apply oidc-idp",
     "db:migrate:local": "wrangler d1 migrations apply oidc-idp --local",
     "seed": "tsx scripts/seed.ts",
+    "provision": "bash scripts/provision.sh",
     "deploy": "wrangler deploy",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",

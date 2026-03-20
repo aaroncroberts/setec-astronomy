@@ -1,14 +1,23 @@
 # Deployment Guide
 
-This guide covers the complete first-time deployment of the OIDC IdP to Cloudflare Workers.
+This guide covers first-time and ongoing deployment of the OIDC IdP to Cloudflare Workers.
 
 ## Prerequisites
 
-- Cloudflare account with Workers and D1 enabled
-- Wrangler CLI v4+: `npm install -g wrangler`
-- OpenSSL for key generation
+| Requirement        | Version | Notes                          |
+| ------------------ | ------- | ------------------------------ |
+| Node.js            | 18+     | Runtime for Wrangler + scripts |
+| Wrangler CLI       | v4+     | `npm install -g wrangler`      |
+| OpenSSL            | any     | Key generation                 |
+| Cloudflare account | —       | Workers + D1 must be enabled   |
 
-## Step 1: Clone and install
+> If you're on the Cloudflare free plan, Workers and D1 are included. No billing required for development.
+
+---
+
+## First-Time Deployment
+
+### Step 1: Clone and install
 
 ```bash
 git clone https://github.com/your-org/setec-astronomy
@@ -16,209 +25,272 @@ cd setec-astronomy
 npm install
 ```
 
-## Step 2: Create Cloudflare resources
-
-### D1 database
+### Step 2: Authenticate with Cloudflare
 
 ```bash
-wrangler d1 create oidc-db
+wrangler login
 ```
 
-Output example:
-
-```
-✅ Successfully created DB 'oidc-db' in region WEUR
-Created your new D1 database.
-
-[[d1_databases]]
-binding = "OIDC_DB"
-database_name = "oidc-db"
-database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-```
-
-Copy the `[[d1_databases]]` block into `wrangler.toml`.
-
-### KV namespace
+This opens a browser window to authorize Wrangler. Verify it worked:
 
 ```bash
-wrangler kv:namespace create oidc-kv
+wrangler whoami
 ```
 
-Output example:
+### Step 3: Provision Cloudflare resources
 
+The provisioning script handles everything in one step:
+
+```bash
+npm run provision
 ```
-[[kv_namespaces]]
-binding = "OIDC_KV"
-id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+This script:
+
+1. Creates the **D1 database** (`oidc-idp`)
+2. Creates the **KV namespace** (`oidc-idp`) and preview namespace
+3. **Patches `wrangler.toml`** with the real resource IDs automatically
+4. Generates a **2048-bit RSA signing key** and uploads it as a Wrangler secret
+5. Generates a **32-byte ADMIN_API_KEY** and uploads it as a Wrangler secret
+6. Runs **D1 migrations** against the remote database
+
+The script is idempotent — safe to re-run if something fails partway through.
+
+> **Save the ADMIN_API_KEY printed at the end.** It is uploaded as a Cloudflare secret and cannot be retrieved again. You will need it to create users and OIDC clients.
+
+#### Manual provisioning (alternative)
+
+If you prefer to run steps individually:
+
+```bash
+# Create D1 database
+wrangler d1 create oidc-idp
+# → Copy the database_id into wrangler.toml
+
+# Create KV namespace
+wrangler kv namespace create oidc-idp
+# → Copy the id into wrangler.toml [[kv_namespaces]]
+
+# Create KV preview namespace (for wrangler dev)
+wrangler kv namespace create oidc-idp --preview
+# → Copy the id into wrangler.toml preview_id
+
+# Generate and upload RSA key
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out signing.key
+cat signing.key | wrangler secret put SIGNING_KEY_PRIVATE
+rm signing.key
+
+# Generate and upload admin key
+openssl rand -hex 32 | wrangler secret put ADMIN_API_KEY
+
+# Run migrations
+wrangler d1 migrations apply oidc-idp --remote
 ```
 
-Copy the `[[kv_namespaces]]` block into `wrangler.toml`.
+### Step 4: Set your ISSUER URL
 
-## Step 3: Configure wrangler.toml
-
-Update the placeholders with your actual resource IDs and your Worker's public URL:
+Open `wrangler.toml` and update the `ISSUER` variable to your Worker's public URL:
 
 ```toml
-name = "oidc-idp"
-main = "src/index.ts"
-compatibility_date = "2024-01-01"
-
 [vars]
 ISSUER = "https://oidc-idp.your-subdomain.workers.dev"
-
-[[d1_databases]]
-binding = "OIDC_DB"
-database_name = "oidc-db"
-database_id = "<your-d1-database-id>"
-
-[[kv_namespaces]]
-binding = "OIDC_KV"
-id = "<your-kv-namespace-id>"
 ```
 
-> The `ISSUER` value must exactly match the URL your Worker is deployed to.
-> It appears in every JWT `iss` claim and in the discovery document.
+The `ISSUER` value:
 
-## Step 4: Generate RSA signing key
+- Must exactly match your deployed Worker URL
+- Appears in every JWT `iss` claim
+- Appears in the OIDC discovery document
+- Cannot be changed after issuing tokens without breaking existing integrations
 
-```bash
-# Generate 2048-bit RSA key in PKCS#8 format
-openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out signing.key
+To find your subdomain: `wrangler deploy --dry-run 2>&1 | grep workers.dev`
 
-# Verify the key
-openssl pkey -in signing.key -text -noout | head -5
-```
-
-**Keep `signing.key` secure and off your filesystem after uploading.**
-
-## Step 5: Upload secrets
-
-```bash
-# Upload the RSA private key (paste the PEM when prompted, then Ctrl+D)
-cat signing.key | wrangler secret put SIGNING_KEY_PRIVATE
-
-# Set a strong admin API key (min 32 random characters recommended)
-echo "$(openssl rand -hex 32)" | wrangler secret put ADMIN_API_KEY
-```
-
-**Record the `ADMIN_API_KEY` value — you will need it to create users and clients.**
-
-## Step 6: Run database migrations
-
-```bash
-# Apply all migrations to the remote D1 database
-wrangler d1 migrations apply oidc-db --remote
-```
-
-Output:
-
-```
-✅ Successfully applied 3 migrations to oidc-db.
-```
-
-## Step 7: Deploy
+### Step 5: Deploy
 
 ```bash
 wrangler deploy
 ```
 
-## Step 8: Verify deployment
+### Step 6: Verify
 
 ```bash
-# Check discovery document
-curl https://your-worker.workers.dev/.well-known/openid-configuration | jq .
-
-# Check JWKS
-curl https://your-worker.workers.dev/jwks.json | jq .
+WORKER_URL="https://oidc-idp.your-subdomain.workers.dev"
 
 # Health check
-curl https://your-worker.workers.dev/health
+curl "${WORKER_URL}/health"
+# → {"status":"ok"}
+
+# OIDC discovery document
+curl "${WORKER_URL}/.well-known/openid-configuration" | jq .
+# → {"issuer":"...","authorization_endpoint":"...","jwks_uri":"...",...}
+
+# JWKS (public signing key)
+curl "${WORKER_URL}/jwks.json" | jq .
+# → {"keys":[{"kty":"RSA","use":"sig","alg":"RS256",...}]}
 ```
 
-## Step 9: Create initial user and client
+### Step 7: Create initial user and OIDC client
 
 ```bash
-export ADMIN_API_KEY="<your-admin-api-key>"
-export WORKER_URL="https://your-worker.workers.dev"
+export ADMIN_API_KEY="<your-admin-api-key-from-step-3>"
+export WORKER_URL="https://oidc-idp.your-subdomain.workers.dev"
 
-# Create a user
-curl -X POST $WORKER_URL/admin/users \
-  -H "x-admin-api-key: $ADMIN_API_KEY" \
+# Create an admin user
+curl -s -X POST "${WORKER_URL}/admin/users" \
+  -H "x-admin-api-key: ${ADMIN_API_KEY}" \
   -H "content-type: application/json" \
   -d '{
     "email": "admin@example.com",
     "password": "change-me-in-production-123",
     "profile": {"name": "Admin", "groups": ["admins"]}
-  }'
+  }' | jq .
 
-# Create an OAuth client for Cloudflare Zero Trust
-curl -X POST $WORKER_URL/admin/clients \
-  -H "x-admin-api-key: $ADMIN_API_KEY" \
+# Create an OIDC client for Cloudflare Zero Trust
+curl -s -X POST "${WORKER_URL}/admin/clients" \
+  -H "x-admin-api-key: ${ADMIN_API_KEY}" \
   -H "content-type: application/json" \
   -d '{
     "name": "Cloudflare Zero Trust",
     "redirect_uris": ["https://your-team.cloudflareaccess.com/cdn-cgi/access/callback"],
     "allowed_scopes": ["openid", "email", "profile"],
     "is_confidential": true
-  }'
+  }' | jq .
 ```
 
-**Save the `client_id` and `client_secret` from the client creation response. The secret is not stored in plain text and cannot be retrieved again.**
+> **Save the `client_id` and `client_secret`** from the client response. The secret is hashed and cannot be retrieved from the API again.
 
-## Step 10: Register in Cloudflare Zero Trust
+### Step 8: Connect to Cloudflare Zero Trust
 
-1. Open the [Cloudflare Zero Trust dashboard](https://one.dash.cloudflare.com)
-2. Navigate to **Settings → Authentication → Login methods**
-3. Click **Add new** → **OpenID Connect**
-4. Fill in the form:
-   - **Name:** `My OIDC IdP` (any name)
-   - **App ID:** `<client_id from step 9>`
-   - **Client Secret:** `<client_secret from step 9>`
-   - **Auth URL:** `https://your-worker.workers.dev/authorize`
-   - **Token URL:** `https://your-worker.workers.dev/token`
-   - **Certificate URL:** `https://your-worker.workers.dev/jwks.json`
-   - **PKCE:** ✅ Enabled
+1. Open [Cloudflare Zero Trust](https://one.dash.cloudflare.com)
+2. Go to **Settings → Authentication → Login methods**
+3. Click **Add new → OpenID Connect**
+4. Fill in:
+
+| Field               | Value                                       |
+| ------------------- | ------------------------------------------- |
+| **Name**            | My OIDC IdP (or any name)                   |
+| **App ID**          | `client_id` from step 7                     |
+| **Client Secret**   | `client_secret` from step 7                 |
+| **Auth URL**        | `https://your-worker.workers.dev/authorize` |
+| **Token URL**       | `https://your-worker.workers.dev/token`     |
+| **Certificate URL** | `https://your-worker.workers.dev/jwks.json` |
+| **PKCE**            | ✅ Enabled                                  |
+
 5. Click **Save and Test**
 
-## Local Development
+---
 
-Create `.dev.vars` in the project root (this file is gitignored):
+## Updating a Deployment
 
-```bash
-cat > .dev.vars << 'EOF'
-SIGNING_KEY_PRIVATE="-----BEGIN PRIVATE KEY-----
-<paste your development key here>
------END PRIVATE KEY-----"
-ADMIN_API_KEY=local-dev-secret
-ISSUER=http://localhost:8787
-EOF
-```
-
-Run the local dev server:
-
-```bash
-npm run dev
-```
-
-Apply migrations locally:
-
-```bash
-wrangler d1 migrations apply oidc-db --local
-```
-
-## Updating
-
-To deploy a new version:
+### Code-only update (no migrations)
 
 ```bash
 git pull
 npm install
-npm test           # Verify tests pass
+npm test          # Verify tests pass
 wrangler deploy
 ```
 
-If migrations were added:
+### Update with new migrations
 
 ```bash
-wrangler d1 migrations apply oidc-db --remote
+git pull
+npm install
+npm test
+wrangler d1 migrations apply oidc-idp --remote
+wrangler deploy
 ```
+
+---
+
+## Managing Secrets
+
+List deployed secrets (names only — values are never shown):
+
+```bash
+wrangler secret list
+```
+
+Rotate the signing key (see [docs/key-rotation.md](key-rotation.md) for the full zero-downtime procedure):
+
+```bash
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 | \
+  wrangler secret put SIGNING_KEY_PRIVATE
+wrangler deploy
+```
+
+Rotate the admin API key:
+
+```bash
+openssl rand -hex 32 | wrangler secret put ADMIN_API_KEY
+wrangler deploy
+```
+
+---
+
+## Checking Deployed Resources
+
+```bash
+# List D1 databases
+wrangler d1 list
+
+# Database size and status
+wrangler d1 info oidc-idp
+
+# List KV namespaces
+wrangler kv namespace list
+
+# List all deployed Workers
+wrangler deployments list
+
+# Tail live logs (useful for debugging)
+wrangler tail
+```
+
+---
+
+## Local Development
+
+See [developer-guide.md](developer-guide.md) for local setup with `wrangler dev`.
+
+Quick summary:
+
+```bash
+# Copy and fill in secrets
+cp .dev.vars.example .dev.vars
+# Edit .dev.vars — generate key with: openssl genpkey -algorithm RSA ...
+
+# Apply migrations locally
+npm run db:migrate:local
+
+# Start dev server
+npm run dev
+
+# Seed test user + OIDC client
+npm run seed
+```
+
+---
+
+## Troubleshooting
+
+### `wrangler deploy` fails: "D1 database not found"
+
+The `database_id` in `wrangler.toml` does not match a real database in your account. Run `wrangler d1 list` to find the correct ID.
+
+### "Invalid PKCS8 input" errors at runtime
+
+The signing key in the `SIGNING_KEY_PRIVATE` secret is malformed or uses an unsupported format. Cloudflare Workers' WebCrypto API requires PKCS#8 PEM format. Re-generate with:
+
+```bash
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 | \
+  wrangler secret put SIGNING_KEY_PRIVATE
+```
+
+### Discovery document returns wrong `issuer`
+
+The `ISSUER` variable in `wrangler.toml` does not match the actual Worker URL. Update `[vars] ISSUER` to the exact URL and redeploy.
+
+### Admin API returns 401
+
+The `x-admin-api-key` header value does not match the `ADMIN_API_KEY` secret. Use `wrangler secret list` to confirm the secret exists, then re-check your client configuration.

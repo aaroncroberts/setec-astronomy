@@ -124,27 +124,28 @@ tests/
   integration/  Vitest integration tests in Miniflare Workers runtime
 
 migrations/     D1 SQL migrations (applied in order)
-scripts/        Developer scripts (seed.ts)
+scripts/        Developer + deployment scripts (seed.ts, provision.sh)
 docs/           Documentation
 ```
 
 ## npm scripts reference
 
-| Script                     | Description                            |
-| :------------------------- | :------------------------------------- |
-| `npm run dev`              | Start local Worker with `wrangler dev` |
-| `npm run db:migrate:local` | Apply D1 migrations to local SQLite    |
-| `npm run db:migrate`       | Apply D1 migrations to production D1   |
-| `npm run seed`             | Seed test user and OIDC client         |
-| `npm test`                 | Run unit tests                         |
-| `npm run test:integration` | Run integration tests (Miniflare)      |
-| `npm run test:coverage`    | Unit tests with coverage report        |
-| `npm run typecheck`        | TypeScript type checking               |
-| `npm run lint`             | ESLint                                 |
-| `npm run format`           | Prettier (auto-fix)                    |
-| `npm run format:check`     | Prettier (check only, used in CI)      |
-| `npm run ci`               | Full CI gate: typecheck + lint + test  |
-| `npm run deploy`           | Deploy to Cloudflare Workers           |
+| Script                     | Description                                                  |
+| :------------------------- | :----------------------------------------------------------- |
+| `npm run dev`              | Start local Worker with `wrangler dev`                       |
+| `npm run db:migrate:local` | Apply D1 migrations to local SQLite                          |
+| `npm run db:migrate`       | Apply D1 migrations to production D1                         |
+| `npm run seed`             | Seed test user and OIDC client                               |
+| `npm test`                 | Run unit tests                                               |
+| `npm run test:integration` | Run integration tests (Miniflare)                            |
+| `npm run test:coverage`    | Unit tests with coverage report                              |
+| `npm run typecheck`        | TypeScript type checking                                     |
+| `npm run lint`             | ESLint                                                       |
+| `npm run format`           | Prettier (auto-fix)                                          |
+| `npm run format:check`     | Prettier (check only, used in CI)                            |
+| `npm run ci`               | Full CI gate: typecheck + lint + test                        |
+| `npm run provision`        | Provision Cloudflare resources (D1, KV, secrets, migrations) |
+| `npm run deploy`           | Deploy to Cloudflare Workers                                 |
 
 ## Troubleshooting
 
