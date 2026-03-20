@@ -1,40 +1,15 @@
 import { Hono } from 'hono';
-import { z } from 'zod';
 import type { Env } from '../types';
 import { adminAuth } from '../middleware/admin';
 import { createUser } from '../db/users';
 import { createClient } from '../db/clients';
 import { hashPassword } from '../crypto/password';
+import { CreateUserSchema, CreateClientSchema } from '../schemas';
 
 const adminRouter = new Hono<{ Bindings: Env }>();
 
 // All admin routes require API key authentication
 adminRouter.use('*', adminAuth);
-
-// ── Schema definitions ────────────────────────────────────────────────────────
-
-const CreateUserSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
-  profile: z
-    .object({
-      name: z.string().optional(),
-      groups: z.array(z.string()).optional(),
-    })
-    .optional(),
-});
-
-const CreateClientSchema = z.object({
-  name: z.string().min(1, { message: 'Client name is required' }),
-  redirect_uris: z
-    .array(z.string().url({ message: 'Each redirect URI must be a valid URL' }))
-    .min(1, { message: 'At least one redirect URI is required' }),
-  allowed_scopes: z
-    .array(z.string())
-    .min(1, { message: 'At least one scope is required' })
-    .refine((s) => s.includes('openid'), { message: '"openid" scope is required' }),
-  is_confidential: z.boolean().default(true),
-});
 
 // ── POST /admin/users ─────────────────────────────────────────────────────────
 

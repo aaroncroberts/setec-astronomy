@@ -172,7 +172,7 @@ describe('POST /token — PKCE failures', () => {
       redirect_uri: REDIRECT_URI,
       client_id: clientId,
       client_secret: clientSecret,
-      code_verifier: 'wrong-verifier-that-does-not-match',
+      code_verifier: 'wrong-verifier-that-does-not-match-the-challenge-xxxx',
     });
     expect(res.status).toBe(400);
     const body = await res.json();

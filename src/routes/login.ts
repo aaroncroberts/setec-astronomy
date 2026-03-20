@@ -4,6 +4,7 @@ import { getUserByEmail } from '../db/users';
 import { verifyPassword } from '../crypto/password';
 import { putSession, getState, SESSION_TTL } from '../kv/store';
 import { generateId } from '../crypto/random';
+import { LoginFormSchema } from '../schemas';
 
 /**
  * GET /login
@@ -150,13 +151,14 @@ export async function handleLoginPost(
     return redirectToLoginWithError(c.env.ISSUER, '', 'invalid_request');
   }
 
-  const email = formData.get('email');
-  const password = formData.get('password');
-  const state = formData.get('state') ?? '';
-
-  if (typeof email !== 'string' || typeof password !== 'string' || typeof state !== 'string') {
-    return redirectToLoginWithError(c.env.ISSUER, String(state), 'invalid_request');
+  const raw = Object.fromEntries([...formData.entries()].map(([k, v]) => [k, String(v)]));
+  const parsed = LoginFormSchema.safeParse(raw);
+  if (!parsed.success) {
+    const state = raw['state'] ?? '';
+    return redirectToLoginWithError(c.env.ISSUER, state, 'invalid_request');
   }
+
+  const { email, password, state } = parsed.data;
 
   // Verify state exists in KV (binds the login to an active OIDC request)
   const stateData = await getState(c.env.OIDC_KV, state);

@@ -4,6 +4,8 @@ import { handleDiscovery, handleJwks } from './routes/discovery';
 import { handleAuthorize } from './routes/authorize';
 import { handleLoginForm, handleLoginPost } from './routes/login';
 import { handleToken } from './routes/token';
+import { rateLimitMiddleware } from './middleware/ratelimit';
+import { corsMiddleware } from './middleware/cors';
 import { handleUserinfo } from './routes/userinfo';
 import { handleLogout } from './routes/logout';
 import { adminRouter } from './routes/admin';
@@ -24,12 +26,14 @@ export function createApp(): Hono<{ Bindings: Env }> {
   // ── Authorization & Login ─────────────────────────────────────────────────
   app.get('/authorize', handleAuthorize);
   app.get('/login', handleLoginForm);
-  app.post('/login', handleLoginPost);
+  app.post('/login', rateLimitMiddleware('login'), handleLoginPost);
 
   // ── Token, Userinfo, Logout ───────────────────────────────────────────────
-  app.post('/token', handleToken);
-  app.get('/userinfo', handleUserinfo);
-  app.post('/userinfo', handleUserinfo); // OIDC spec allows POST too
+  app.post('/token', corsMiddleware, handleToken);
+  app.get('/userinfo', corsMiddleware, handleUserinfo);
+  app.post('/userinfo', corsMiddleware, handleUserinfo); // OIDC spec allows POST too
+  app.options('/token', corsMiddleware);
+  app.options('/userinfo', corsMiddleware);
   app.get('/logout', handleLogout);
 
   // ── Admin API ─────────────────────────────────────────────────────────────

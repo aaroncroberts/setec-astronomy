@@ -2,11 +2,11 @@ import type { Context } from 'hono';
 import type { Env } from '../types';
 import { getAuthCode, deleteAuthCode } from '../kv/store';
 import { getClientById, verifyClientSecret, getAllowedScopes } from '../db/clients';
-import { getUserById } from '../db/users';
+import { getUserById, parseUserProfile } from '../db/users';
 import { importRsaPrivateKey, deriveAndExportPublicKey } from '../crypto/keys';
 import { verifyPkceS256 } from '../crypto/pkce';
 import { signIdToken, signAccessToken, ACCESS_TOKEN_TTL } from '../tokens/issue';
-import { parseUserProfile } from '../db/users';
+import { TokenRequestSchema } from '../schemas';
 
 const KID = 'key-1';
 
@@ -27,24 +27,23 @@ export async function handleToken(c: Context<{ Bindings: Env }>): Promise<Respon
     return tokenError(c, 'invalid_request', 'Could not parse request body', 400);
   }
 
-  const grantType = form.get('grant_type');
-  if (grantType !== 'authorization_code') {
+  // Build plain object from FormData for Zod validation
+  const raw = Object.fromEntries(
+    [...form.entries()].map(([k, v]) => [k, String(v)]),
+  );
+
+  // Check grant_type first for correct RFC 6749 error code
+  if (raw['grant_type'] !== 'authorization_code') {
     return tokenError(c, 'unsupported_grant_type', 'Only authorization_code is supported', 400);
   }
 
-  const code = form.get('code');
-  const redirectUri = form.get('redirect_uri');
-  const clientId = form.get('client_id');
-  const codeVerifier = form.get('code_verifier');
-
-  if (
-    typeof code !== 'string' ||
-    typeof redirectUri !== 'string' ||
-    typeof clientId !== 'string' ||
-    typeof codeVerifier !== 'string'
-  ) {
-    return tokenError(c, 'invalid_request', 'Missing required parameters', 400);
+  const parsed = TokenRequestSchema.safeParse(raw);
+  if (!parsed.success) {
+    const message = parsed.error.issues[0]?.message ?? 'Invalid request parameters';
+    return tokenError(c, 'invalid_request', message, 400);
   }
+
+  const { code, redirect_uri: redirectUri, client_id: clientId, code_verifier: codeVerifier } = parsed.data;
 
   // ── Load and validate client ───────────────────────────────────────────────
 
