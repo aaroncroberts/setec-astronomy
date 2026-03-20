@@ -41,11 +41,7 @@ export async function handleToken(c: Context<{ Bindings: Env }>): Promise<Respon
     return tokenError(c, 'invalid_request', message, 400);
   }
 
-  const {
-    code,
-    redirect_uri: redirectUri,
-    code_verifier: codeVerifier,
-  } = parsed.data;
+  const { code, redirect_uri: redirectUri, code_verifier: codeVerifier } = parsed.data;
 
   // ── Resolve client credentials ─────────────────────────────────────────────
   // RFC 6749 §2.3.1: confidential clients MAY use Authorization: Basic, in

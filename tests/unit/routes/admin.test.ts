@@ -210,8 +210,16 @@ describe('POST /admin/clients', () => {
 
 describe('GET /admin/users', () => {
   beforeEach(async () => {
-    await adminPost('/admin/users', { email: 'alice@example.com', password: 'password123' }, 'test-admin-secret');
-    await adminPost('/admin/users', { email: 'bob@example.com', password: 'password123' }, 'test-admin-secret');
+    await adminPost(
+      '/admin/users',
+      { email: 'alice@example.com', password: 'password123' },
+      'test-admin-secret',
+    );
+    await adminPost(
+      '/admin/users',
+      { email: 'bob@example.com', password: 'password123' },
+      'test-admin-secret',
+    );
   });
 
   it('returns all users with total count', async () => {
@@ -253,7 +261,13 @@ describe('GET /admin/users', () => {
 
 describe('GET /admin/users/:id', () => {
   it('returns the user by id', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'carol@example.com', password: 'password123' }, 'test-admin-secret')).json();
+    const created = await (
+      await adminPost(
+        '/admin/users',
+        { email: 'carol@example.com', password: 'password123' },
+        'test-admin-secret',
+      )
+    ).json();
     const res = await adminGet(`/admin/users/${created.id}`);
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -273,7 +287,13 @@ describe('GET /admin/users/:id', () => {
 
 describe('PATCH /admin/users/:id', () => {
   it('updates email', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'old@example.com', password: 'password123' }, 'test-admin-secret')).json();
+    const created = await (
+      await adminPost(
+        '/admin/users',
+        { email: 'old@example.com', password: 'password123' },
+        'test-admin-secret',
+      )
+    ).json();
     const res = await adminPatch(`/admin/users/${created.id}`, { email: 'new@example.com' });
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -281,7 +301,13 @@ describe('PATCH /admin/users/:id', () => {
   });
 
   it('deactivates a user', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'deact@example.com', password: 'password123' }, 'test-admin-secret')).json();
+    const created = await (
+      await adminPost(
+        '/admin/users',
+        { email: 'deact@example.com', password: 'password123' },
+        'test-admin-secret',
+      )
+    ).json();
     const res = await adminPatch(`/admin/users/${created.id}`, { is_active: false });
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -289,7 +315,13 @@ describe('PATCH /admin/users/:id', () => {
   });
 
   it('reactivates a user', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'react@example.com', password: 'password123' }, 'test-admin-secret')).json();
+    const created = await (
+      await adminPost(
+        '/admin/users',
+        { email: 'react@example.com', password: 'password123' },
+        'test-admin-secret',
+      )
+    ).json();
     await adminPatch(`/admin/users/${created.id}`, { is_active: false });
     const res = await adminPatch(`/admin/users/${created.id}`, { is_active: true });
     const body = await res.json();
@@ -302,7 +334,13 @@ describe('PATCH /admin/users/:id', () => {
   });
 
   it('returns 400 for empty body', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'empty@example.com', password: 'password123' }, 'test-admin-secret')).json();
+    const created = await (
+      await adminPost(
+        '/admin/users',
+        { email: 'empty@example.com', password: 'password123' },
+        'test-admin-secret',
+      )
+    ).json();
     const res = await adminPatch(`/admin/users/${created.id}`, {});
     expect(res.status).toBe(400);
   });
@@ -312,13 +350,25 @@ describe('PATCH /admin/users/:id', () => {
 
 describe('DELETE /admin/users/:id', () => {
   it('deletes a user and returns 204', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'del@example.com', password: 'password123' }, 'test-admin-secret')).json();
+    const created = await (
+      await adminPost(
+        '/admin/users',
+        { email: 'del@example.com', password: 'password123' },
+        'test-admin-secret',
+      )
+    ).json();
     const res = await adminDelete(`/admin/users/${created.id}`);
     expect(res.status).toBe(204);
   });
 
   it('user is gone after deletion', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'gone@example.com', password: 'password123' }, 'test-admin-secret')).json();
+    const created = await (
+      await adminPost(
+        '/admin/users',
+        { email: 'gone@example.com', password: 'password123' },
+        'test-admin-secret',
+      )
+    ).json();
     await adminDelete(`/admin/users/${created.id}`);
     const res = await adminGet(`/admin/users/${created.id}`);
     expect(res.status).toBe(404);

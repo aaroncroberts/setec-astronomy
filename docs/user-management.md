@@ -14,7 +14,7 @@ Users are persisted in a Cloudflare D1 (SQLite) table with the following fields:
 | `email`         | string  | Unique login identifier                                       |
 | `password_hash` | string  | PBKDF2-SHA256, 100k iterations, stored as `salt_b64:hash_b64` |
 | `is_active`     | 0 or 1  | Whether the user can log in (`1` = active, `0` = deactivated) |
-| `profile_json`  | string  | JSON blob: `{ name?, groups?, ...extensible }`               |
+| `profile_json`  | string  | JSON blob: `{ name?, groups?, ...extensible }`                |
 | `created_at`    | integer | Unix timestamp (seconds) at creation                          |
 | `updated_at`    | integer | Unix timestamp (seconds) of last modification                 |
 
@@ -38,10 +38,10 @@ Both fields are optional. The field is extensible — you can add arbitrary keys
 
 ### Deactivation vs. deletion
 
-| Operation      | Mechanism         | Effect                                                    | Reversible? |
-| -------------- | ----------------- | --------------------------------------------------------- | ----------- |
-| Deactivate     | `is_active = 0`   | User cannot log in; existing tokens expire naturally      | Yes         |
-| Hard delete    | Row removed from DB | User cannot log in; record is permanently destroyed     | No          |
+| Operation   | Mechanism           | Effect                                               | Reversible? |
+| ----------- | ------------------- | ---------------------------------------------------- | ----------- |
+| Deactivate  | `is_active = 0`     | User cannot log in; existing tokens expire naturally | Yes         |
+| Hard delete | Row removed from DB | User cannot log in; record is permanently destroyed  | No          |
 
 **Prefer deactivation over deletion** unless you have a specific reason to permanently remove the record (e.g., GDPR erasure request). Deactivation preserves audit history and is immediately reversible.
 
@@ -81,13 +81,13 @@ curl -X POST https://your-worker.workers.dev/admin/users \
 
 **Request body:**
 
-| Field            | Required | Description                                    |
-| ---------------- | -------- | ---------------------------------------------- |
-| `email`          | ✅       | Valid email address                            |
-| `password`       | ✅       | Minimum 8 characters (hashed before storage)  |
-| `profile`        | ❌       | Optional profile object                        |
-| `profile.name`   | ❌       | Display name                                   |
-| `profile.groups` | ❌       | Array of group names                           |
+| Field            | Required | Description                                  |
+| ---------------- | -------- | -------------------------------------------- |
+| `email`          | ✅       | Valid email address                          |
+| `password`       | ✅       | Minimum 8 characters (hashed before storage) |
+| `profile`        | ❌       | Optional profile object                      |
+| `profile.name`   | ❌       | Display name                                 |
+| `profile.groups` | ❌       | Array of group names                         |
 
 **Response: 201 Created**
 
@@ -120,11 +120,11 @@ curl "https://your-worker.workers.dev/admin/users?search=alice&limit=10&offset=0
 
 **Query parameters:**
 
-| Parameter | Default | Description                                      |
-| --------- | ------- | ------------------------------------------------ |
+| Parameter | Default | Description                                       |
+| --------- | ------- | ------------------------------------------------- |
 | `search`  | (none)  | Filter by email or profile name (substring match) |
-| `limit`   | 20      | Max results per page (1–100)                     |
-| `offset`  | 0       | Number of records to skip                        |
+| `limit`   | 20      | Max results per page (1–100)                      |
+| `offset`  | 0       | Number of records to skip                         |
 
 **Response: 200 OK**
 
@@ -195,14 +195,14 @@ curl -X PATCH https://your-worker.workers.dev/admin/users/$USER_ID \
 
 **Request body (all fields optional, at least one required):**
 
-| Field              | Description                                              |
-| ------------------ | -------------------------------------------------------- |
-| `email`            | New email address                                        |
-| `password`         | New password (minimum 8 chars; re-hashed before storage) |
-| `is_active`        | `true` to reactivate, `false` to deactivate              |
-| `profile`          | Replaces the entire profile object                       |
-| `profile.name`     | Display name                                             |
-| `profile.groups`   | Group memberships (replaces existing groups)             |
+| Field            | Description                                              |
+| ---------------- | -------------------------------------------------------- |
+| `email`          | New email address                                        |
+| `password`       | New password (minimum 8 chars; re-hashed before storage) |
+| `is_active`      | `true` to reactivate, `false` to deactivate              |
+| `profile`        | Replaces the entire profile object                       |
+| `profile.name`   | Display name                                             |
+| `profile.groups` | Group memberships (replaces existing groups)             |
 
 **Note:** `profile` is replaced wholesale, not merged. If you want to add a group without removing existing ones, fetch the current profile first, modify it, then PATCH with the full updated profile.
 

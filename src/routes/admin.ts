@@ -4,7 +4,12 @@ import { adminAuth } from '../middleware/admin';
 import { createUser, getUserById, listUsers, updateUser, deleteUser } from '../db/users';
 import { createClient } from '../db/clients';
 import { hashPassword } from '../crypto/password';
-import { CreateUserSchema, CreateClientSchema, UpdateUserSchema, ListUsersQuerySchema } from '../schemas';
+import {
+  CreateUserSchema,
+  CreateClientSchema,
+  UpdateUserSchema,
+  ListUsersQuerySchema,
+} from '../schemas';
 
 const adminRouter = new Hono<{ Bindings: Env }>();
 

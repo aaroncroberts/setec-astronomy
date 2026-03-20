@@ -71,7 +71,12 @@ export class D1Mock {
           const upd = query.match(/UPDATE\s+(\w+)\s+SET\s+(.+)\s+WHERE\s+id\s*=\s*\?/i);
           if (upd?.[1] && upd?.[2]) {
             const tableName = upd[1];
-            const cols = upd[2].split(',').map((s) => s.trim().replace(/\s*=\s*\?$/, '').trim());
+            const cols = upd[2].split(',').map((s) =>
+              s
+                .trim()
+                .replace(/\s*=\s*\?$/, '')
+                .trim(),
+            );
             const id = boundArgs[boundArgs.length - 1] as string;
             const row = getTable(tableName).get(id);
             if (row) {
@@ -79,7 +84,11 @@ export class D1Mock {
                 row[col] = boundArgs[i];
               });
             }
-            return Promise.resolve({ success: true, results: [] as Row[], meta: { changes: row ? 1 : 0 } });
+            return Promise.resolve({
+              success: true,
+              results: [] as Row[],
+              meta: { changes: row ? 1 : 0 },
+            });
           }
 
           // DELETE FROM table WHERE id = ?
@@ -89,7 +98,11 @@ export class D1Mock {
             const id = boundArgs[0] as string;
             const existed = getTable(tableName).has(id);
             getTable(tableName).delete(id);
-            return Promise.resolve({ success: true, results: [] as Row[], meta: { changes: existed ? 1 : 0 } });
+            return Promise.resolve({
+              success: true,
+              results: [] as Row[],
+              meta: { changes: existed ? 1 : 0 },
+            });
           }
 
           return Promise.resolve({ success: true, results: [] as Row[], meta: {} });
