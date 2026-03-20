@@ -1,0 +1,8 @@
+name = "oidc-demo"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+account_id = "5def4131bcd4c2f86727fd3ba888db1d"
+
+[dev]
+port = 8788
+local_protocol = "http"

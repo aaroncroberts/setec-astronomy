@@ -1,13 +1,14 @@
 /**
  * Password hashing using PBKDF2 via the Web Crypto API.
  *
- * Uses 310,000 iterations (NIST SP 800-132 recommendation for SHA-256),
- * a random 16-byte salt per hash, and SHA-256 as the PRF.
+ * Uses 100,000 iterations — the maximum supported by the Cloudflare Workers
+ * WebCrypto runtime. This is within acceptable security range for PBKDF2-SHA256.
+ * A random 16-byte salt per hash and SHA-256 as the PRF.
  *
  * Stored format: "<salt_b64>:<hash_b64>" (both base64url-encoded).
  */
 
-const ITERATIONS = 310_000;
+const ITERATIONS = 100_000;
 const SALT_BYTES = 16;
 const KEY_LENGTH_BITS = 256;
 const ALGORITHM = 'PBKDF2';
