@@ -36,4 +36,5 @@ export const corsMiddleware: MiddlewareHandler<{ Bindings: Env }> = async (c, ne
   // Add CORS headers to the actual response
   c.res.headers.set('Access-Control-Allow-Origin', '*');
   c.res.headers.set('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+  return undefined;
 };
