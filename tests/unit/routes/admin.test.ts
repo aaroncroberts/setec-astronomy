@@ -217,14 +217,14 @@ describe('GET /admin/users', () => {
   it('returns all users with total count', async () => {
     const res = await adminGet('/admin/users');
     expect(res.status).toBe(200);
-    const body = await res.json() as { users: unknown[]; total: number };
+    const body = await res.json();
     expect(body.users).toHaveLength(2);
     expect(body.total).toBe(2);
   });
 
   it('never exposes password_hash in the response', async () => {
     const res = await adminGet('/admin/users');
-    const body = await res.json() as { users: Record<string, unknown>[] };
+    const body = await res.json();
     for (const user of body.users) {
       expect(user['password_hash']).toBeUndefined();
     }
@@ -232,14 +232,14 @@ describe('GET /admin/users', () => {
 
   it('filters users by search term', async () => {
     const res = await adminGet('/admin/users?search=alice');
-    const body = await res.json() as { users: { email: string }[]; total: number };
+    const body = await res.json();
     expect(body.total).toBe(1);
     expect(body.users[0].email).toBe('alice@example.com');
   });
 
   it('respects limit and offset', async () => {
     const res = await adminGet('/admin/users?limit=1&offset=0');
-    const body = await res.json() as { users: unknown[] };
+    const body = await res.json();
     expect(body.users).toHaveLength(1);
   });
 
@@ -253,10 +253,10 @@ describe('GET /admin/users', () => {
 
 describe('GET /admin/users/:id', () => {
   it('returns the user by id', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'carol@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const created = await (await adminPost('/admin/users', { email: 'carol@example.com', password: 'password123' }, 'test-admin-secret')).json();
     const res = await adminGet(`/admin/users/${created.id}`);
     expect(res.status).toBe(200);
-    const body = await res.json() as { email: string; id: string };
+    const body = await res.json();
     expect(body.id).toBe(created.id);
     expect(body.email).toBe('carol@example.com');
   });
@@ -264,7 +264,7 @@ describe('GET /admin/users/:id', () => {
   it('returns 404 for unknown id', async () => {
     const res = await adminGet('/admin/users/nonexistent-id');
     expect(res.status).toBe(404);
-    const body = await res.json() as { error: string };
+    const body = await res.json();
     expect(body.error).toBe('not_found');
   });
 });
@@ -273,26 +273,26 @@ describe('GET /admin/users/:id', () => {
 
 describe('PATCH /admin/users/:id', () => {
   it('updates email', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'old@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const created = await (await adminPost('/admin/users', { email: 'old@example.com', password: 'password123' }, 'test-admin-secret')).json();
     const res = await adminPatch(`/admin/users/${created.id}`, { email: 'new@example.com' });
     expect(res.status).toBe(200);
-    const body = await res.json() as { email: string };
+    const body = await res.json();
     expect(body.email).toBe('new@example.com');
   });
 
   it('deactivates a user', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'deact@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const created = await (await adminPost('/admin/users', { email: 'deact@example.com', password: 'password123' }, 'test-admin-secret')).json();
     const res = await adminPatch(`/admin/users/${created.id}`, { is_active: false });
     expect(res.status).toBe(200);
-    const body = await res.json() as { is_active: number };
+    const body = await res.json();
     expect(body.is_active).toBe(0);
   });
 
   it('reactivates a user', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'react@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const created = await (await adminPost('/admin/users', { email: 'react@example.com', password: 'password123' }, 'test-admin-secret')).json();
     await adminPatch(`/admin/users/${created.id}`, { is_active: false });
     const res = await adminPatch(`/admin/users/${created.id}`, { is_active: true });
-    const body = await res.json() as { is_active: number };
+    const body = await res.json();
     expect(body.is_active).toBe(1);
   });
 
@@ -302,7 +302,7 @@ describe('PATCH /admin/users/:id', () => {
   });
 
   it('returns 400 for empty body', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'empty@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const created = await (await adminPost('/admin/users', { email: 'empty@example.com', password: 'password123' }, 'test-admin-secret')).json();
     const res = await adminPatch(`/admin/users/${created.id}`, {});
     expect(res.status).toBe(400);
   });
@@ -312,13 +312,13 @@ describe('PATCH /admin/users/:id', () => {
 
 describe('DELETE /admin/users/:id', () => {
   it('deletes a user and returns 204', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'del@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const created = await (await adminPost('/admin/users', { email: 'del@example.com', password: 'password123' }, 'test-admin-secret')).json();
     const res = await adminDelete(`/admin/users/${created.id}`);
     expect(res.status).toBe(204);
   });
 
   it('user is gone after deletion', async () => {
-    const created = await (await adminPost('/admin/users', { email: 'gone@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const created = await (await adminPost('/admin/users', { email: 'gone@example.com', password: 'password123' }, 'test-admin-secret')).json();
     await adminDelete(`/admin/users/${created.id}`);
     const res = await adminGet(`/admin/users/${created.id}`);
     expect(res.status).toBe(404);

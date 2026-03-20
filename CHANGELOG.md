@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-03-20
+
+### Added
+
+**Admin API — User Management**
+
+- `GET /admin/users` — list all users with optional `search` (email/name substring),
+  `limit` (default 20, max 100), and `offset` pagination; returns `{ users, total, limit, offset }`
+- `GET /admin/users/:id` — fetch a single user by UUID; returns 404 if not found
+- `PATCH /admin/users/:id` — partial update: `email`, `password` (re-hashed with PBKDF2),
+  `is_active` (deactivate/reactivate), `profile` (`name`, `groups`); rejects empty bodies
+- `DELETE /admin/users/:id` — hard-deletes a user; returns 204 on success, 404 if not found
+- `UpdateUserSchema` and `ListUsersQuerySchema` Zod schemas with coercion for query params
+- Extended `D1Mock` test helper to support `UPDATE`, `DELETE`, `SELECT COUNT(*)`,
+  and `SELECT` with `LIKE` filtering and `LIMIT`/`OFFSET` pagination
+
+**Documentation**
+
+- `docs/user-management.md` — user data model, `is_active` semantics, deactivation vs.
+  hard-delete tradeoffs, full Admin API reference with curl examples, operator workflows
+  (provision, offboard, reset password, group management), security considerations
+- `docs/admin-api.md` — updated with stubs for all four new user endpoints
+- `README.md` — linked `docs/user-management.md` in documentation table
+
+**Demo App**
+
+- `examples/demo-app/scripts/provision-user.sh` — shell script to provision a demo user
+  via the Admin API before running the OIDC login demo; handles 409 conflicts gracefully
+- `examples/demo-app/README.md` — full operator walkthrough: provision → protect → login → verify
+
+### Changed
+
+- `172` unit tests (up from 142); all passing
+
 ## [0.1.0] — 2026-03-20
 
 ### Added
@@ -61,5 +95,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `docs/admin-api.md` — Admin API reference with curl examples
 - `docs/key-rotation.md` — zero-downtime RSA key rotation runbook
 
-[Unreleased]: https://github.com/aaroncroberts/setec-astronomy/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/aaroncroberts/setec-astronomy/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/aaroncroberts/setec-astronomy/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/aaroncroberts/setec-astronomy/releases/tag/v0.1.0

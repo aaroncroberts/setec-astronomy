@@ -105,8 +105,8 @@ export class D1Mock {
               const like = String(boundArgs[0]).replace(/%/g, '').toLowerCase();
               rows = rows.filter(
                 (r) =>
-                  String(r['email'] ?? '').toLowerCase().includes(like) ||
-                  String(r['profile_json'] ?? '').toLowerCase().includes(like),
+                  ((r['email'] as string | undefined) ?? '').toLowerCase().includes(like) ||
+                  ((r['profile_json'] as string | undefined) ?? '').toLowerCase().includes(like),
               );
             }
             return Promise.resolve({ total: rows.length });
@@ -150,8 +150,8 @@ export class D1Mock {
               const like = String(boundArgs[0]).replace(/%/g, '').toLowerCase();
               rows = rows.filter(
                 (r) =>
-                  String(r['email'] ?? '').toLowerCase().includes(like) ||
-                  String(r['profile_json'] ?? '').toLowerCase().includes(like),
+                  ((r['email'] as string | undefined) ?? '').toLowerCase().includes(like) ||
+                  ((r['profile_json'] as string | undefined) ?? '').toLowerCase().includes(like),
               );
             }
 
