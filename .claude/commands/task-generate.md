@@ -47,39 +47,45 @@ Analyze the user's input to determine the appropriate work item type.
 
 If explicit hint found → use that type, **strip the prefix from the title**, then skip to Step 2.
 
-**IMPORTANT**: Title prefixes are for *input detection only*. Generated issue titles must NOT include type prefixes—the type is encoded in `--type=<type>` metadata.
+**IMPORTANT**: Title prefixes are for _input detection only_. Generated issue titles must NOT include type prefixes—the type is encoded in `--type=<type>` metadata.
 
 ### 1b. Analyze Implicit Signals
 
 Score each type by keyword matches (check title + description):
 
 **Epic Signals** (+3 points each):
+
 - "initiative", "overhaul", "migration", "redesign system"
 - "multi-sprint", "phase 1", "strategic", "transform"
 - Multiple feature areas mentioned
 
 **Feature Signals** (+3 points each):
+
 - "add [capability]", "implement [noun]", "support for"
 - "enable users to", "introduce", "allow [action]"
 - Clear capability boundary described
 
 **Task Signals** (+3 points each):
+
 - "create [file]", "write [code]", "configure [thing]"
 - "update [specific]", "modify", "add [small thing]"
 - Single deliverable, session-completable
 
 **Bug Signals** (+3 points each):
+
 - "broken", "doesn't work", "fails to", "error when"
 - "crash", "wrong", "incorrect", "unexpected"
 - "should [verb] but [doesn't]", "used to work"
 - Repro steps pattern detected
 
 **Chore Signals** (+3 points each):
+
 - "clean up", "refactor", "remove unused"
 - "update dependencies", "deprecate", "rename"
 - "tech debt", "housekeeping"
 
 **Scoring:**
+
 1. Count signal matches for each type
 2. Highest score wins
 3. Tie-breaker (prefer smaller scope): Task > Bug > Chore > Feature > Epic
@@ -89,15 +95,16 @@ Score each type by keyword matches (check title + description):
 
 Based on detected type, assess WBS need:
 
-| Type | Default Scope | WBS Needed? |
-|------|---------------|-------------|
-| Epic | Multi-feature | **Always** (decompose to Features) |
-| Feature | Multi-task | Usually (decompose to Tasks) |
-| Task | Single item | Rarely (single bd create) |
-| Bug | Single item | Rarely (single bd create) |
-| Chore | Single item | Never |
+| Type    | Default Scope | WBS Needed?                        |
+| ------- | ------------- | ---------------------------------- |
+| Epic    | Multi-feature | **Always** (decompose to Features) |
+| Feature | Multi-task    | Usually (decompose to Tasks)       |
+| Task    | Single item   | Rarely (single bd create)          |
+| Bug     | Single item   | Rarely (single bd create)          |
+| Chore   | Single item   | Never                              |
 
 **WBS Indicators** (override to "needs WBS"):
+
 - "phases", "steps", "first...then..." language
 - Multiple distinct deliverables mentioned
 - Research/discovery needed before implementation
@@ -110,43 +117,54 @@ Use the appropriate template based on detected work item type.
 
 ```markdown
 ## Overview
+
 [High-level description of the strategic initiative]
 
 ## Goals
+
 - [Measurable outcome 1]
 - [Measurable outcome 2]
 
 ## Success Criteria
+
 - [ ] [Indicator 1 - required by bdlint]
 - [ ] [Indicator 2]
 
 ## Scope
+
 **In Scope**: [What this epic covers]
 **Out of Scope**: [What this epic does NOT cover]
 
 ## Features
-| Feature | Description |
-|---------|-------------|
-| [Name] | [Brief description] |
+
+| Feature | Description         |
+| ------- | ------------------- |
+| [Name]  | [Brief description] |
 
 ---
-*Living document - updates as discovery progresses*
+
+_Living document - updates as discovery progresses_
 ```
 
 ### Feature Template
 
 ```markdown
 ## Overview
+
 [What capability this feature delivers]
 
 ## Scope
+
 **In Scope:**
+
 - [Included functionality]
 
 **Out of Scope:**
+
 - [Explicitly excluded]
 
 ## Acceptance Criteria
+
 - [ ] [Testable outcome - required by bdlint]
 - [ ] [Testable outcome]
 ```
@@ -158,9 +176,11 @@ Use the appropriate template based on detected work item type.
 **OUTGOING**: [Deliverables for downstream work]
 
 ## Description
+
 [What needs to be done]
 
 ## Acceptance Criteria
+
 - [ ] [Testable outcome - required by bdlint]
 - [ ] [Testable outcome]
 ```
@@ -173,10 +193,12 @@ For tasks that output research or analysis:
 **OUTPUT**: [Specific deliverable type, e.g., "Implementation task list"]
 
 ## Research Scope
+
 - [Area to investigate 1]
 - [Area to investigate 2]
 
 ## Deliverable
+
 [What this task produces for downstream work]
 ```
 
@@ -184,21 +206,26 @@ For tasks that output research or analysis:
 
 ```markdown
 ## Steps to Reproduce
+
 1. [Precondition/setup]
 2. [Action taken]
 3. [Result observed]
 
 ## Expected Behavior
+
 [What should happen]
 
 ## Actual Behavior
+
 [What happens instead]
 
 ## Environment
+
 - Version: [if applicable]
 - Platform: [OS/browser/device]
 
 ## Acceptance Criteria
+
 - [ ] Bug no longer reproduces
 - [ ] [Additional verification]
 ```
@@ -207,12 +234,15 @@ For tasks that output research or analysis:
 
 ```markdown
 ## Cleanup Scope
+
 [What is being cleaned/refactored/updated]
 
 ## Context
+
 Related to: [parent task/feature this supports, if any]
 
 ## Completion Criteria
+
 - [ ] [What defines done]
 ```
 
@@ -239,6 +269,7 @@ If `--parent=<id>` provided, validate and use it.
 ### 3b. Extract Search Keywords
 
 From the bug description, extract component identifiers:
+
 - Component names: "login", "dashboard", "export", "API"
 - Code identifiers: CamelCase or snake_case terms
 - Skip generic words: "the", "is", "when", "broken"
@@ -250,17 +281,18 @@ bd search "<keywords>" --type=feature --status=open --limit=5 --json
 ```
 
 **Score each result:**
+
 - Title keyword match: +3 points per keyword
 - Description keyword match: +1 point per keyword
 - Updated in last 30 days: +2 points
 
 ### 3d. Handle Results
 
-| Confidence | Action |
-|------------|--------|
-| High (score ≥ 6) | Auto-link to highest-scoring feature |
-| Medium (score 3-5) | Suggest linkage, ask for confirmation |
-| Low (< 3) or none | Search closed features, then create standalone with warning |
+| Confidence         | Action                                                      |
+| ------------------ | ----------------------------------------------------------- |
+| High (score ≥ 6)   | Auto-link to highest-scoring feature                        |
+| Medium (score 3-5) | Suggest linkage, ask for confirmation                       |
+| Low (< 3) or none  | Search closed features, then create standalone with warning |
 
 ### Example: Bug Parent Resolution
 
@@ -296,12 +328,12 @@ echo "Created bug $bug_id linked to Feature: Data Export"
 
 Use `--parent` to establish organizational hierarchy:
 
-| Parent Type | Valid Children |
-|-------------|---------------|
-| Epic | Feature |
-| Feature | Task, Bug, Chore |
-| Task | Chore |
-| Bug | Chore |
+| Parent Type | Valid Children   |
+| ----------- | ---------------- |
+| Epic        | Feature          |
+| Feature     | Task, Bug, Chore |
+| Task        | Chore            |
+| Bug         | Chore            |
 
 ```bash
 epic=$(bd create "Initiative" --type=epic --silent)
@@ -319,6 +351,7 @@ bd dep add $task_b $task_a
 ```
 
 **When to use blocking deps:**
+
 - Task B needs output from Task A (data dependency)
 - Tasks touch same files (resource conflict)
 - Review must complete before merge
@@ -473,11 +506,13 @@ Set up GitHub Actions for automated testing and deployment.
 ## Output Format
 
 ### Success: Single Item
+
 ```
 Applied WBS to new <type>: <id>
 ```
 
 ### Success: WBS Created
+
 ```
 Applied WBS to new <root-type>: <root-id>
 ├── <child-type>: <child-id>
@@ -486,6 +521,7 @@ Applied WBS to new <root-type>: <root-id>
 ```
 
 ### Partial Failure
+
 ```
 ⚠️ WBS partially applied.
 
@@ -501,6 +537,7 @@ Recovery:
 ```
 
 ### Bug Parent Not Found
+
 ```
 ⚠️ No parent Feature found for bug.
 
@@ -515,23 +552,23 @@ Options:
 
 ## Quick Reference
 
-| Type | Required Sections | Parent Search | Typical Children |
-|------|-------------------|---------------|------------------|
-| Epic | Success Criteria | No | Features |
-| Feature | Acceptance Criteria | No | Tasks, Bugs, Chores |
-| Task | Acceptance Criteria | No | Chores (rare) |
-| Bug | Steps to Reproduce, Acceptance | Yes (Feature) | Chores (rare) |
-| Chore | None | Optional | None |
+| Type    | Required Sections              | Parent Search | Typical Children    |
+| ------- | ------------------------------ | ------------- | ------------------- |
+| Epic    | Success Criteria               | No            | Features            |
+| Feature | Acceptance Criteria            | No            | Tasks, Bugs, Chores |
+| Task    | Acceptance Criteria            | No            | Chores (rare)       |
+| Bug     | Steps to Reproduce, Acceptance | Yes (Feature) | Chores (rare)       |
+| Chore   | None                           | Optional      | None                |
 
 ## Priority Guidelines
 
-| Priority | When to Use |
-|----------|-------------|
-| P0 (0) | Blocks other work, critical path |
-| P1 (1) | Core functionality, high value |
-| P2 (2) | Standard priority (default) |
-| P3 (3) | Nice to have, polish |
-| P4 (4) | Future consideration, backlog |
+| Priority | When to Use                      |
+| -------- | -------------------------------- |
+| P0 (0)   | Blocks other work, critical path |
+| P1 (1)   | Core functionality, high value   |
+| P2 (2)   | Standard priority (default)      |
+| P3 (3)   | Nice to have, polish             |
+| P4 (4)   | Future consideration, backlog    |
 
 ## Related Skills
 

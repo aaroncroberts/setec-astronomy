@@ -1,0 +1,40 @@
+name = "oidc-idp"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ──────────────────────────────────────────────────────────────────────────────
+# D1 Database — persistent storage for users, clients, refresh tokens
+# ──────────────────────────────────────────────────────────────────────────────
+[[d1_databases]]
+binding = "OIDC_DB"
+database_name = "oidc-idp"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# KV Namespace — short-lived state: auth codes, PKCE, sessions, nonces
+# ──────────────────────────────────────────────────────────────────────────────
+[[kv_namespaces]]
+binding = "OIDC_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+preview_id = "REPLACE_WITH_KV_PREVIEW_ID"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Environment Variables
+# Set ISSUER to your Worker's public URL (e.g. https://idp.example.com)
+# ──────────────────────────────────────────────────────────────────────────────
+[vars]
+ISSUER = "https://idp.example.com"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Secrets (set via: wrangler secret put <NAME>)
+# SIGNING_KEY_PRIVATE — RSA private key in PEM format (RS256 JWT signing)
+# ADMIN_API_KEY       — Secret key for /admin/* endpoints
+# ──────────────────────────────────────────────────────────────────────────────
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Local development overrides
+# ──────────────────────────────────────────────────────────────────────────────
+[dev]
+port = 8787
+local_protocol = "http"

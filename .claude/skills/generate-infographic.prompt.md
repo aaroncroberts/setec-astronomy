@@ -28,6 +28,7 @@ ls {directory}/*.prompt.md {directory}/*.content.md 2>/dev/null || echo "❌ Req
 ### STEP 2: Initialize Tracking
 
 **Action:** Set up variables to track progress:
+
 - `current_batch = 1`
 - `max_batches = 5`
 - `target_score = 90`
@@ -120,8 +121,8 @@ Skill(skill="ig-evaluate", args="{directory}/*.webp")
 ═══════════════════════════════════════════════
 
 🏆 **Winner:** {best_variant_overall} ({best_score_overall}/100)
-📦 **Batches:** {current_batch} ({current_batch * 3} variants total)
-💰 **Cost:** FREE ({current_batch * 3}/500 daily quota used)
+📦 **Batches:** {current_batch} ({current_batch _ 3} variants total)
+💰 **Cost:** FREE ({current_batch _ 3}/500 daily quota used)
 
 🎯 **Recommendation:** Use {best_variant_overall} for publication
 
@@ -200,11 +201,13 @@ Execute this workflow automatically until 90%+ score achieved or 5 batches compl
 ## Expected Files
 
 **Input (must exist):**
+
 - `<directory>/<name>.prompt.md` or `prompt.md` - Style instructions
 - `<directory>/<name>.content.md` or `content.md` - Data/content
 - `<directory>/<name>.source.md` or `VIS-*.source.md` - Source material for verification
 
 **Output (auto-generated):**
+
 - `<name>-1.png` through `<name>-N.png` - Generated PNGs
 - `<name>-1.webp` through `<name>-N.webp` - Converted WebP files
 - `<name>.eval.md` - Comprehensive evaluation report
@@ -237,6 +240,7 @@ Execute this workflow automatically until 90%+ score achieved or 5 batches compl
 ## Implementation Details
 
 ### Batch Numbering
+
 - Batch 1: variants 1-3
 - Batch 2: variants 4-6
 - Batch 3: variants 7-9
@@ -244,6 +248,7 @@ Execute this workflow automatically until 90%+ score achieved or 5 batches compl
 - Batch 5: variants 13-15
 
 ### Score Interpretation
+
 - **95-100%**: Outstanding - exceptional quality
 - **90-94%**: Excellent - target achieved ✅
 - **80-89%**: Good - continue iterating
@@ -390,5 +395,5 @@ BATCH 2 (Variants 4-6)
 
 ---
 
-*Skill created: December 29, 2025*
-*Powered by: Gemini 2.5 Flash Image API + EventAI ig-evaluate workflow*
+_Skill created: December 29, 2025_
+_Powered by: Gemini 2.5 Flash Image API + EventAI ig-evaluate workflow_

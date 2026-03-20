@@ -7,6 +7,7 @@
 **Arni** is a Rust library and CLI tool for unified database access. It provides a consistent interface for exporting DataFrames to multiple database systems (PostgreSQL, MongoDB, Oracle, SQL Server, DuckDB) with intelligent type inference and adapter patterns.
 
 **Tech Stack:**
+
 - **Language:** Rust (stable + nightly)
 - **Data:** Polars DataFrames
 - **Databases:** PostgreSQL, MongoDB, Oracle, SQL Server, DuckDB
@@ -84,6 +85,7 @@ make clippy
 ## Test Organization
 
 ### Unit Tests
+
 - **Location:** In-module tests (`src/*/mod.rs`)
 - **Scope:** Single function/struct behavior
 - **Speed:** Fast (<100ms)
@@ -106,6 +108,7 @@ mod tests {
 ```
 
 ### Integration Tests
+
 - **Location:** `tests/` directory (separate from src)
 - **Scope:** End-to-end adapter behavior
 - **Speed:** Slower (database I/O)
@@ -124,12 +127,14 @@ fn test_postgres_export() {
 ```
 
 **Conditional Execution:**
+
 - Integration tests use environment variables (`TEST_POSTGRES_AVAILABLE=true`)
 - Tests check availability before running: `if !is_postgres_available() { return; }`
 - Use `#[ignore]` attribute for tests requiring database setup
 - See [tests/README.md](../tests/README.md) for database setup
 
 ### Test Fixtures
+
 - **Location:** `tests/fixtures/mod.rs`
 - **Purpose:** Reusable test data (sample DataFrames, schemas)
 - **Usage:** Import with `use crate::fixtures::*;`
@@ -145,6 +150,7 @@ let empty = empty_dataframe();              // Edge case testing
 ## Code Quality Standards
 
 ### Coverage Requirements
+
 - **Minimum:** 80% line coverage
 - **Goal:** 90% line coverage
 - **Exclude:** Integration tests, example code
@@ -161,6 +167,7 @@ open target/tarpaulin/html/index.html
 ```
 
 ### Formatting (rustfmt)
+
 - **Style:** Default rustfmt settings
 - **Check:** `cargo fmt -- --check` (CI mode)
 - **Fix:** `cargo fmt` (auto-format)
@@ -177,6 +184,7 @@ make fmt-check
 ```
 
 ### Linting (clippy)
+
 - **Mode:** Deny warnings (`-D warnings`)
 - **Targets:** All (lib, bins, tests, examples)
 - **Auto-fix:** Available with `--fix` flag
@@ -195,6 +203,7 @@ make clippy
 ```
 
 **Clippy Rules:**
+
 - All warnings treated as errors in CI
 - Use `#[allow(clippy::rule)]` sparingly (with justification)
 - Fix pedantic warnings before merge
@@ -202,6 +211,7 @@ make clippy
 ## Development Workflow
 
 ### Starting Work
+
 ```bash
 # 1. Claim task
 bd update <task-id> --status in_progress
@@ -214,6 +224,7 @@ git checkout -b feature/my-feature
 ```
 
 ### Development Loop
+
 ```bash
 # Write test → Write code → Test passes
 # Repeat until feature complete
@@ -225,6 +236,7 @@ cargo check                # Type checking only
 ```
 
 ### Pre-Commit Checklist
+
 ```bash
 # Run all quality gates
 make pre-commit
@@ -237,6 +249,7 @@ cargo test                          # Run all tests
 ```
 
 ### Committing Work
+
 ```bash
 # Stage changes
 git add -A
@@ -249,6 +262,7 @@ git push && bd sync
 ```
 
 ### Completing Task
+
 ```bash
 # 1. Document deliverables
 bd update <task-id> --notes="Implemented X, Y, Z"
@@ -305,6 +319,7 @@ See [scripts/README.md](../scripts/README.md) for detailed script documentation.
 GitHub Actions runs on every push/PR to `main` or `develop`:
 
 ### CI Pipeline Jobs
+
 1. **Format Check** - Verify `cargo fmt` compliance
 2. **Clippy** - Lint with `-D warnings`
 3. **Test Matrix** - Test on 6 combinations:
@@ -315,6 +330,7 @@ GitHub Actions runs on every push/PR to `main` or `develop`:
 6. **CI Success** - Summary job for branch protection
 
 ### Running CI Locally
+
 ```bash
 # Run full CI pipeline
 make ci-check
@@ -327,6 +343,7 @@ cargo build --release
 ```
 
 ### CI Optimization
+
 - **Caching:** Cargo registry, git dependencies, build artifacts
 - **Incremental:** Only changed crates rebuild
 - **Parallel:** Multiple matrix combinations run simultaneously
@@ -336,6 +353,7 @@ See [.github/workflows/README.md](../.github/workflows/README.md) for CI details
 ## Best Practices
 
 ### Testing
+
 - **Test first:** Write test before implementation
 - **One assertion:** Focus tests on single behavior
 - **Clear names:** Use descriptive test function names
@@ -346,6 +364,7 @@ See [.github/workflows/README.md](../.github/workflows/README.md) for CI details
 - **Edge cases:** Test empty, null, boundary conditions
 
 ### Code Organization
+
 - **Small functions:** <50 lines per function
 - **Single responsibility:** One clear purpose per function
 - **Error handling:** Use `Result<T, E>` with descriptive errors
@@ -354,6 +373,7 @@ See [.github/workflows/README.md](../.github/workflows/README.md) for CI details
 - **Type safety:** Use newtypes for domain concepts
 
 ### Git Workflow
+
 - **Branch naming:** `feature/`, `fix/`, `refactor/`, `docs/`
 - **Commit messages:** Conventional commits (`feat:`, `fix:`, `docs:`, etc.)
 - **Small commits:** Logical, atomic changes
@@ -363,6 +383,7 @@ See [.github/workflows/README.md](../.github/workflows/README.md) for CI details
 ## Troubleshooting
 
 ### Tests Failing
+
 ```bash
 # Run with full output
 cargo test -- --nocapture
@@ -375,6 +396,7 @@ cargo test test_name -- --exact --nocapture
 ```
 
 ### Integration Tests Skipped
+
 ```bash
 # Check environment variables
 cat .env.test
@@ -396,6 +418,7 @@ cargo test --test '*' -- --ignored
 ```
 
 ### Coverage Not Generated
+
 ```bash
 # Install tarpaulin
 cargo install cargo-tarpaulin
@@ -408,6 +431,7 @@ cargo build --tests
 ```
 
 ### Clippy Warnings
+
 ```bash
 # Show detailed explanation
 cargo clippy -- -D warnings --verbose

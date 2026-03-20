@@ -15,6 +15,7 @@ This skill demonstrates **pure function-calling** for querying beads issue data.
 ## Purpose
 
 Provide a reference implementation for:
+
 - Read-only beads queries using function calls
 - Combining multiple query functions for complex information needs
 - Formatting and presenting query results to users
@@ -50,7 +51,7 @@ Provide a reference implementation for:
 const ready = await beads_ready();
 
 // Step 2: If user wants details on a specific issue
-const details = await beads_show({ ids: "beads-abc" });
+const details = await beads_show({ ids: 'beads-abc' });
 ```
 
 **Use when**: User asks "what should I work on?" or "show me available tasks"
@@ -63,8 +64,8 @@ const stats = await beads_stats();
 
 // Step 2: Optionally drill into specific categories
 const inProgress = await beads_list({
-  status: "in_progress",
-  sort: "priority"
+  status: 'in_progress',
+  sort: 'priority',
 });
 ```
 
@@ -75,14 +76,14 @@ const inProgress = await beads_list({
 ```typescript
 // Step 1: Find issues matching criteria
 const results = await beads_list({
-  type: "bug",
-  status: "open",
-  priority: "0"
+  type: 'bug',
+  status: 'open',
+  priority: '0',
 });
 
 // Step 2: Get details on found issues
 const details = await beads_show({
-  ids: results.map(r => r.id).join(",")
+  ids: results.map((r) => r.id).join(','),
 });
 ```
 
@@ -92,7 +93,7 @@ const details = await beads_show({
 
 ```typescript
 // Step 1: Show issue details
-const issue = await beads_show({ ids: "beads-abc" });
+const issue = await beads_show({ ids: 'beads-abc' });
 
 // Step 2: For each blocker, get its details
 for (const blockerId of issue.blockedBy) {
@@ -193,7 +194,7 @@ if (ready.issues.length === 0) {
 
 ```typescript
 try {
-  const result = await beads_show({ ids: "invalid-id" });
+  const result = await beads_show({ ids: 'invalid-id' });
 } catch (error) {
   // Inform user: "Issue 'invalid-id' not found."
 }
@@ -202,7 +203,7 @@ try {
 ### Large Result Sets
 
 ```typescript
-const allIssues = await beads_list({ status: "open" });
+const allIssues = await beads_list({ status: 'open' });
 
 if (allIssues.length > 20) {
   // Suggest filtering: "Found 47 open issues. Would you like to
@@ -217,6 +218,7 @@ if (allIssues.length > 20) {
 **User**: "What's ready to work on?"
 
 **Assistant**:
+
 ```typescript
 // Execute function call
 const result = await beads_ready();
@@ -225,6 +227,7 @@ const result = await beads_ready();
 ```
 
 Response:
+
 ```
 You have 3 issues ready to work:
 
@@ -240,12 +243,13 @@ Would you like details on any of these?
 **User**: "Show me all P0 bugs and tell me what's blocking them"
 
 **Assistant**:
+
 ```typescript
 // Step 1: Find P0 bugs
 const bugs = await beads_list({
-  type: "bug",
-  priority: "0",
-  status: "open"
+  type: 'bug',
+  priority: '0',
+  status: 'open',
 });
 
 // Step 2: Get details including blockers
@@ -262,6 +266,7 @@ for (const bug of bugs) {
 ```
 
 Response:
+
 ```
 Found 2 P0 bugs:
 
@@ -278,18 +283,20 @@ Found 2 P0 bugs:
 **User**: "How are we doing on this sprint?"
 
 **Assistant**:
+
 ```typescript
 // Get overall stats
 const stats = await beads_stats();
 
 // Get in-progress work
-const active = await beads_list({ status: "in_progress" });
+const active = await beads_list({ status: 'in_progress' });
 
 // Get blocked issues
-const blocked = await beads_list({ status: "blocked" });
+const blocked = await beads_list({ status: 'blocked' });
 ```
 
 Response:
+
 ```
 📊 Sprint Health:
 
@@ -319,33 +326,37 @@ Blockers to Resolve:
 ## Anti-Patterns to Avoid
 
 ❌ **Don't fetch details unnecessarily**:
+
 ```typescript
 // Bad: Fetching full details when list summary is enough
-const issues = await beads_list({ status: "open" });
+const issues = await beads_list({ status: 'open' });
 for (const issue of issues) {
   await beads_show({ ids: issue.id }); // Wasteful!
 }
 ```
 
 ✅ **Do use list summaries when possible**:
+
 ```typescript
 // Good: List provides enough info for summary view
-const issues = await beads_list({ status: "open" });
+const issues = await beads_list({ status: 'open' });
 // Present summary, only fetch details if user asks
 ```
 
 ❌ **Don't make redundant calls**:
+
 ```typescript
 // Bad: Calling stats when list gives you the count
 const stats = await beads_stats();
 const openCount = stats.status.open;
-const openIssues = await beads_list({ status: "open" });
+const openIssues = await beads_list({ status: 'open' });
 ```
 
 ✅ **Do use the right tool**:
+
 ```typescript
 // Good: List already gives you count
-const openIssues = await beads_list({ status: "open" });
+const openIssues = await beads_list({ status: 'open' });
 // Use openIssues.length
 ```
 

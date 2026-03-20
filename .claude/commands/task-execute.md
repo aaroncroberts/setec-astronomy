@@ -43,16 +43,19 @@ Beads is an installed CLI for persistent issue tracking across sessions. Use for
 --priority=3      # P3 (Low - nice to have)
 --priority=4      # P4 (Backlog - future)
 ```
+
 ⚠️ **DO NOT use**: "high", "medium", "low" (use numeric values only)
 
 ## Creating Issues
 
 ### Basic Issue
+
 ```bash
 bd create --title="Implement user authentication" --type=feature --priority=2
 ```
 
 ### Full-Featured Issue
+
 ```bash
 bd create \
   --title="Add error handling to API" \
@@ -76,6 +79,7 @@ bd close <id1> <id2> <id3>             # Batch close (more efficient)
 ### Dependency Types
 
 **Blocking Dependencies** (prevent progress):
+
 ```bash
 bd dep add <issue> --depends-on <blocker>
 # OR
@@ -87,6 +91,7 @@ bd dep <blocker> --blocks <issue>
 ```
 
 **Hierarchy & Structure**:
+
 ```bash
 bd dep add <child> --depends-on <parent> --type=parent-child
 # parent-child: Parent task must complete before child can progress
@@ -94,6 +99,7 @@ bd dep add <child> --depends-on <parent> --type=parent-child
 ```
 
 **Relationship Types** (different purposes):
+
 ```bash
 # TRACKING - issue monitors/references another
 bd dep add <tracker> --depends-on <tracked> --type=tracks
@@ -121,6 +127,7 @@ bd dep add <new> --depends-on <old> --type=supersedes
 ```
 
 **Loose Relationships** (no blocking, for knowledge graphs):
+
 ```bash
 bd dep relate <issue1> <issue2>        # Bidirectional "see also"
 # Related issues referenced each other
@@ -191,6 +198,7 @@ bd doctor                       # Check for sync issues
 ## Session Workflow
 
 ### Starting Work
+
 ```bash
 bd ready                                    # Find available work
 bd show <id>                                # Review details
@@ -200,6 +208,7 @@ bd update <id> --status=in_progress        # Claim it
 ### Completing Work
 
 **Before closing ANY issue**, verify:
+
 ```bash
 npm run lab:test                           # Unit tests pass (NO E2E - keep fast)
 npm run lab:clean                          # Lint + typecheck pass (MANDATORY)
@@ -220,15 +229,18 @@ bd show <child-id>                         # Verify status is 'closed' or 'tombs
 ```
 
 **Closure Rules:**
+
 - ✅ **Can close**: All children/descendants are `closed` or `tombstoned`
 - ❌ **Cannot close**: ANY child/descendant has status `open`, `in_progress`, or `blocked`
 
 If descendants are still open:
+
 1. Complete the outstanding child tasks first
 2. OR close/tombstone the children if no longer needed
 3. OR move children to a different parent if work should continue separately
 
 **Example validation:**
+
 ```bash
 # Check if issue has children
 bd dep list todd-lab-xyz --direction=up -t parent-child
@@ -245,13 +257,16 @@ bd close todd-lab-xyz --reason="All children complete"
 ```
 
 Then close and sync:
+
 ```bash
 bd close <id1> <id2> ...                   # Close completed issues
 bd sync                                    # Push to remote
 ```
 
 ### Cleanup (IMPORTANT)
+
 **Before ending a session**, clean up any orphaned test processes:
+
 ```bash
 pkill -f vitest 2>/dev/null || true        # Kill orphaned vitest workers
 ```
@@ -267,24 +282,28 @@ pkill -f vitest 2>/dev/null || true        # Kill orphaned vitest workers
 ## State Update Rules
 
 **Immediately when starting ANY issue:**
+
 ```bash
 bd update <id> --status=in_progress
 bd sync
 ```
 
 **After EVERY significant step (discovery, decision, blocker):**
+
 ```bash
 bd update <id> --notes="Completed X, discovered Y, next: Z"
 bd sync
 ```
 
 **When blocked or encountering issues:**
+
 ```bash
 bd update <id> --notes="BLOCKED: Cannot proceed until X is resolved"
 bd sync
 ```
 
 **When creating new discovered work:**
+
 ```bash
 bd create --title="..." --type=task
 bd dep add <new-id> --depends-on <current-id> --type=discovered-from
@@ -292,6 +311,7 @@ bd sync
 ```
 
 **Before completing work:**
+
 ```bash
 bd update <id> --notes="Final summary: Completed A, B, C. Tests passing."
 bd close <id> --reason="..."
@@ -310,6 +330,7 @@ bd sync
 Every type-specific workflow below integrates these state management touchpoints. Treat `bd update` and `bd sync` as first-class execution steps, not afterthoughts.
 
 **Sync Frequency Guidance:**
+
 - After every phase completion (TDD phases, workflow steps)
 - After creating/closing issues
 - Before any pause or context switch
@@ -328,6 +349,7 @@ The following sections describe how to execute different issue types. All workfl
 **Process**:
 
 1. **Claim and understand scope:**
+
    ```bash
    bd update <epic-id> --status=in_progress
    bd show <epic-id>                              # Read description, Success Criteria
@@ -335,12 +357,14 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 2. **Discover child Features:**
+
    ```bash
    bd dep list <epic-id> --direction=up -t parent-child
    bd dep tree <epic-id>                          # Understand dependency order
    ```
 
 3. **Execute Features in succession:**
+
    ```bash
    # For each Feature (in dependency order):
    /task-execute <feature-id>                     # Execute the Feature
@@ -349,6 +373,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 4. **Create Human Verification task at completion:**
+
    ```bash
    bd create \
      --title="Human Verification: [Epic Name]" \
@@ -381,6 +406,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 **Key Principles:**
+
 - Execute Features sequentially (not in parallel) to maintain clear progress
 - Update Epic notes after EACH Feature completes
 - Sync frequently to preserve progress across potential interruptions
@@ -394,6 +420,7 @@ The following sections describe how to execute different issue types. All workfl
 **Process**:
 
 1. **Claim and understand scope:**
+
    ```bash
    bd update <feature-id> --status=in_progress
    bd show <feature-id>                           # Read description, Acceptance Criteria
@@ -401,12 +428,14 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 2. **Discover child work items:**
+
    ```bash
    bd dep list <feature-id> --direction=up -t parent-child
    bd dep tree <feature-id>                       # Understand dependency order
    ```
 
 3. **Execute children in succession:**
+
    ```bash
    # For each child Task/Chore/Bug (in dependency order):
    /task-execute <child-id>                       # Execute the child
@@ -420,6 +449,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 4. **Verify Acceptance Criteria:**
+
    ```bash
    # Review original Acceptance Criteria from step 1
    # Ensure all criteria are met by completed children
@@ -428,6 +458,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 5. **Create Human Verification task at completion:**
+
    ```bash
    bd create \
      --title="Human Verification: [Feature Name]" \
@@ -465,6 +496,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 **Key Principles:**
+
 - Execute children sequentially to maintain coherent state
 - **Verify each child updated its notes**—this ensures execution context is preserved
 - Map completed children back to Acceptance Criteria before closing
@@ -479,6 +511,7 @@ The following sections describe how to execute different issue types. All workfl
 **Process**:
 
 1. **Claim and understand the immediate scope:**
+
    ```bash
    bd update <task-id> --status=in_progress
    bd show <task-id>                              # Read description, Acceptance Criteria
@@ -486,6 +519,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 2. **Understand ancestor context (WHY this task exists):**
+
    ```bash
    # Find parent Feature or Epic
    bd dep list <task-id> -t parent-child
@@ -495,6 +529,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 3. **Read predecessor notes (INCOMING context/deliverables):**
+
    ```bash
    # Find what blocks this task (what must complete first)
    bd dep list <task-id> --type=blocks
@@ -504,6 +539,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 4. **Understand successor expectations (OUTGOING deliverables):**
+
    ```bash
    # Find what depends on this task
    bd dep list <task-id> --direction=up --type=blocks
@@ -513,6 +549,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 5. **Execute the scoped work:**
+
    ```bash
    # Implement, write tests, run validation
    npm run lab:test                               # Unit tests pass
@@ -524,6 +561,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 6. **Document deliverables in notes (OUTGOING):**
+
    ```bash
    bd update <task-id> --notes="COMPLETED:
    - Implemented [feature/fix/change]
@@ -542,6 +580,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 **Key Principles:**
+
 - Tasks are NOT isolated—they inherit context from ancestors and pass context to successors
 - **Always read predecessor notes**—they contain handoff information you need
 - **Always document OUTGOING deliverables**—successors depend on this context
@@ -557,6 +596,7 @@ The following sections describe how to execute different issue types. All workfl
 **Process**:
 
 1. **Claim and understand the scope:**
+
    ```bash
    bd update <chore-id> --status=in_progress
    bd show <chore-id>                             # Read description, Completion Criteria
@@ -564,6 +604,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 2. **Understand ancestor context (WHY this chore is needed):**
+
    ```bash
    # Find parent Task/Feature to understand motivation
    bd dep list <chore-id> -t parent-child
@@ -573,6 +614,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 3. **Read predecessor notes (INCOMING context):**
+
    ```bash
    # Find what blocks this chore
    bd dep list <chore-id> --type=blocks
@@ -582,6 +624,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 4. **Understand successor expectations (OUTGOING deliverables):**
+
    ```bash
    # Find what depends on this chore
    bd dep list <chore-id> --direction=up --type=blocks
@@ -591,6 +634,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 5. **Execute the maintenance work:**
+
    ```bash
    # Perform cleanup, updates, configuration, etc.
    # For code changes, run validation
@@ -603,6 +647,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 6. **Document work and side effects:**
+
    ```bash
    bd update <chore-id> --notes="CHORE COMPLETE:
    - Work performed: [description]
@@ -619,6 +664,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 **Key Principles:**
+
 - Chores are NOT isolated—they exist to support other work (ancestors provide motivation)
 - Document side effects explicitly—maintenance can have unexpected impacts
 - Verification is critical—confirm the chore achieved its goal
@@ -637,6 +683,7 @@ The following sections describe how to execute different issue types. All workfl
 ### Phase 0: Context & Reproduction (BEFORE TDD)
 
 1. **Claim and understand the bug:**
+
    ```bash
    bd update <bug-id> --status=in_progress
    bd show <bug-id>                               # Read Steps to Reproduce, Expected, Actual
@@ -644,6 +691,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 2. **Understand ancestor context:**
+
    ```bash
    # Find parent Feature to understand system context
    bd dep list <bug-id> -t parent-child
@@ -653,6 +701,7 @@ The following sections describe how to execute different issue types. All workfl
    ```
 
 3. **Attempt to reproduce the bug:**
+
    ```bash
    # Follow Steps to Reproduce exactly as documented
    # Observe actual vs expected behavior
@@ -736,6 +785,7 @@ bd sync
 ```
 
 **Key Principles:**
+
 - **Always attempt manual reproduction before writing tests**—this validates the bug is real
 - Ancestor context helps understand system behavior and edge cases
 - Document reproduction results even if they fail—helps clarify requirements
@@ -746,6 +796,7 @@ bd sync
 ### TDD Checklist for Bugs
 
 Before closing a bug, verify:
+
 - [ ] **Reproduction attempted and documented** (Phase 0)
 - [ ] Failing test written that reproduces the bug (RED phase)
 - [ ] Test failed before fix (RED phase verified)
@@ -815,20 +866,24 @@ bd dep add <verification-task-id> --depends-on <epic-or-feature-id> --type=valid
 ## Template Guidance
 
 ### Title Format
+
 Always use: `"Human Verification: [Exact Epic/Feature Name]"`
 
 ### Type & Priority
+
 - **Type**: Always `task` (not epic/feature—this ensures it's NOT treated as agentic work)
 - **Priority**: Usually `0` (P0) to ensure it's addressed immediately
 
 ### Writing Good Verification Steps
 
 **❌ Bad (vague):**
+
 - "Check if the feature works"
 - "Test the new functionality"
 - "Verify everything is correct"
 
 **✅ Good (specific, testable):**
+
 - "Navigate to /dashboard → Expected: New 'Export' button visible in top-right"
 - "Click 'Export' → CSV → Expected: Download starts, file contains headers"
 - "Open downloaded CSV → Expected: Contains columns: id, name, created_at"
@@ -836,17 +891,20 @@ Always use: `"Human Verification: [Exact Epic/Feature Name]"`
 ### Artifact Specificity
 
 **❌ Bad:**
+
 - "Code files"
 - "Some tests"
 
 **✅ Good:**
+
 - "src/features/export/ExportButton.tsx"
-- "src/features/export/__tests__/ExportButton.test.tsx"
+- "src/features/export/**tests**/ExportButton.test.tsx"
 - "docs/features/export.md"
 
 ### Expected Outcomes
 
 Every step should have a concrete expected outcome that a human can verify:
+
 - Visual changes: "Button appears", "Modal opens", "Error message displays"
 - Data changes: "Database contains new row", "File has correct format"
 - Behavior changes: "API returns 200", "Request completes in <2s"
@@ -854,6 +912,7 @@ Every step should have a concrete expected outcome that a human can verify:
 ### Non-Agentic Warning
 
 **CRITICAL**: Always include this warning in the description:
+
 ```
 ⚠️ **NON-AGENTIC**: Do NOT execute this task with /task-execute.
 This is for manual human verification only.
@@ -879,22 +938,25 @@ When task-execute runs, it automatically appends an execution summary to the ori
 
 ```markdown
 ---
+
 ## Execution Summary
+
 **Timestamp**: 20260119T163111Z
 **Mode**: apply|preview
 **Status**: ✅ Tests passed | ❌ Tests failed | ℹ️ Preview only
 **Logfile**: [execution log](.claude/tmp/task-execute-20260119T163111Z.txt)
 
 **Created Issues**:
+
 - Feature: beads-xxx
 - Task: beads-yyy
 ```
 
 ### Summary Contents
 
-| Mode | Status | Created Issues |
-|------|--------|----------------|
-| `preview` | ℹ️ Preview only | Not shown |
+| Mode                 | Status          | Created Issues     |
+| -------------------- | --------------- | ------------------ |
+| `preview`            | ℹ️ Preview only | Not shown          |
 | `apply` (tests pass) | ✅ Tests passed | Feature + Task IDs |
 | `apply` (tests fail) | ❌ Tests failed | Feature + Task IDs |
 
@@ -911,6 +973,7 @@ Each execution appends a new summary, separated by blank lines. This creates a h
 ---
 
 For full documentation:
+
 ```bash
 bd --help
 bd <command> --help

@@ -9,11 +9,13 @@
 ```
 
 **Do this when:**
+
 - User provides high-level request
 - Starting any new feature or significant work
 - Need to break down complex work
 
 **Process:**
+
 1. Analyze user request
 2. Detect work item type (Epic/Feature/Task/Bug/Chore)
 3. Apply correct description template
@@ -30,10 +32,12 @@
 ```
 
 **Do this when:**
+
 - WBS is created and synced
 - Ready to implement specific work item
 
 **Process:**
+
 1. **Start**: `bd ready` → `bd update <id> --status=in_progress` → `bd sync`
 2. **Context**: Read ancestors, predecessors, successors
 3. **Execute**: Follow type-specific workflow:
@@ -50,12 +54,14 @@
 ## Type-Specific Quick Guide
 
 ### Epic
+
 - Execute child Features sequentially
 - Update notes after each Feature completes
 - Create human verification task at end
 - Sync frequently
 
 ### Feature
+
 - Execute child Tasks/Bugs/Chores sequentially
 - Verify each child updated their notes
 - Map to Acceptance Criteria
@@ -63,6 +69,7 @@
 - Sync frequently
 
 ### Task
+
 - Read ancestor context (WHY)
 - Read predecessor notes (INCOMING)
 - Check successor expectations (OUTGOING)
@@ -71,6 +78,7 @@
 - Sync frequently
 
 ### Bug (TDD MANDATORY)
+
 - Phase 0: Reproduction
 - Phase 1 (RED): Write failing test
 - Phase 2 (GREEN): Implement fix
@@ -79,6 +87,7 @@
 - Sync after each phase
 
 ### Chore
+
 - Like Task but for maintenance
 - Document side effects explicitly
 - Verify goal achieved

@@ -142,5 +142,17 @@ vite.config.ts.timestamp-*
 .dolt/
 *.db
 
+# Node / Worker build artifacts
+node_modules/
+dist/
+.wrangler/
+coverage/
+
+# Environment secrets (never commit)
+.dev.vars
+.env
+.env.*
+!.env.example
+
 # Beads runtime credentials (sensitive, never commit)
 .beads/.beads-credential-key

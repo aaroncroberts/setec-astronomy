@@ -21,28 +21,33 @@ Claude Code's CLAUDE.md file is the **highest-leverage configuration point** for
 # Project: [Name]
 
 ## Commands
+
 - `npm test` - Run tests
 - `npm run lint` - Run ESLint + Prettier check
 - `npm run typecheck` - TypeScript strict mode
 
 ## Testing Standards
+
 - Framework: Vitest + Testing Library
 - Coverage: 80% lines, 75% branches minimum
 - Test files: `*.test.ts` alongside source
 
 ## TDD Workflow (MANDATORY)
+
 1. RED: Write ONE failing test defining expected behavior
 2. GREEN: Write minimal code to pass—nothing more
 3. REFACTOR: Improve while tests stay green
 4. IMPORTANT: NEVER write implementation before tests exist
 
 ## Code Style
+
 - ES modules only (import/export), never CommonJS
 - Type hints required on all functions
 - Max function length: 50 lines
 - Cyclomatic complexity: ≤10
 
 ## Do Not
+
 - Commit directly to `main`
 - Mock internal modules—test integration instead
 - Write multiple tests before implementation
@@ -51,32 +56,36 @@ Claude Code's CLAUDE.md file is the **highest-leverage configuration point** for
 ## Code quality rules
 
 ### Complexity thresholds
-| Metric | Standard | Strict (AI code) |
-|--------|----------|------------------|
-| Cyclomatic complexity | ≤15 | ≤10 |
-| Cognitive complexity | ≤15 | ≤10 |
-| Function length | 50 lines | 20 lines |
-| Max parameters | 5 | 3-4 |
-| Max nesting depth | 4 | 3 |
+
+| Metric                | Standard | Strict (AI code) |
+| --------------------- | -------- | ---------------- |
+| Cyclomatic complexity | ≤15      | ≤10              |
+| Cognitive complexity  | ≤15      | ≤10              |
+| Function length       | 50 lines | 20 lines         |
+| Max parameters        | 5        | 3-4              |
+| Max nesting depth     | 4        | 3                |
 
 ### Documentation requirements
-| Language | Tool | Requirement |
-|----------|------|-------------|
-| TypeScript | ESLint + jsdoc plugin | JSDoc on all public APIs |
-| Python | Ruff + pydocstyle | Google-style docstrings |
-| Go | golint | Package + exported function comments |
-| Rust | rustdoc | `///` on public items |
+
+| Language   | Tool                  | Requirement                          |
+| ---------- | --------------------- | ------------------------------------ |
+| TypeScript | ESLint + jsdoc plugin | JSDoc on all public APIs             |
+| Python     | Ruff + pydocstyle     | Google-style docstrings              |
+| Go         | golint                | Package + exported function comments |
+| Rust       | rustdoc               | `///` on public items                |
 
 ### Coverage thresholds
-| Metric | Minimum | Critical paths |
-|--------|---------|----------------|
-| Line | 80% | 100% |
-| Branch | 75% | 100% |
-| Function | 90% | 100% |
+
+| Metric   | Minimum | Critical paths |
+| -------- | ------- | -------------- |
+| Line     | 80%     | 100%           |
+| Branch   | 75%     | 100%           |
+| Function | 90%     | 100%           |
 
 ## Language-specific configs
 
 ### TypeScript (ESLint)
+
 ```json
 {
   "rules": {
@@ -90,6 +99,7 @@ Claude Code's CLAUDE.md file is the **highest-leverage configuration point** for
 ```
 
 ### Python (pyproject.toml)
+
 ```toml
 [tool.ruff]
 line-length = 88
@@ -107,6 +117,7 @@ addopts = "--cov=src --cov-fail-under=80"
 ```
 
 ### Go (.golangci.yml)
+
 ```yaml
 linters:
   enable: [gocyclo, gocognit, gocritic, errcheck, staticcheck]
@@ -120,6 +131,7 @@ linters-settings:
 ## Common patterns
 
 ### TDD slash command (`.claude/commands/tdd.md`)
+
 ```markdown
 Follow strict TDD for: $ARGUMENTS
 
@@ -134,21 +146,27 @@ CRITICAL: No implementation before Step 1 completes.
 ```
 
 ### TDD Guard hook (`.claude/settings.json`)
+
 ```json
 {
   "hooks": {
-    "PreToolUse": [{
-      "matcher": "Write|Edit|MultiEdit",
-      "hooks": [{
-        "type": "command",
-        "command": "tdd-guard"
-      }]
-    }]
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "tdd-guard"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
 
 ### Hierarchical structure (monorepos)
+
 ```
 project/
 ├── CLAUDE.md                  # Shared: commands, core patterns
@@ -164,19 +182,20 @@ project/
 
 ## Anti-patterns
 
-| Anti-pattern | Problem | Solution |
-|--------------|---------|----------|
-| Bloated CLAUDE.md (>10k words) | Degrades model performance | Keep <300 lines; use imports |
-| Code style in CLAUDE.md | LLMs are slow/expensive linters | Use hooks + formatters |
-| Auto-generated via `/init` | Lacks precision | Manually craft every line |
-| Negative-only constraints | Agent gets stuck | Provide alternatives |
-| Mocking internal modules | Tests implementation, not behavior | Use integration tests |
-| All TDD phases in one context | AI "cheats" on test design | Use subagents for isolation |
-| Copying code snippets | Becomes stale | Reference with `@path/to/file` |
+| Anti-pattern                   | Problem                            | Solution                       |
+| ------------------------------ | ---------------------------------- | ------------------------------ |
+| Bloated CLAUDE.md (>10k words) | Degrades model performance         | Keep <300 lines; use imports   |
+| Code style in CLAUDE.md        | LLMs are slow/expensive linters    | Use hooks + formatters         |
+| Auto-generated via `/init`     | Lacks precision                    | Manually craft every line      |
+| Negative-only constraints      | Agent gets stuck                   | Provide alternatives           |
+| Mocking internal modules       | Tests implementation, not behavior | Use integration tests          |
+| All TDD phases in one context  | AI "cheats" on test design         | Use subagents for isolation    |
+| Copying code snippets          | Becomes stale                      | Reference with `@path/to/file` |
 
 ## Integration examples
 
 ### Pre-commit hooks (`.pre-commit-config.yaml`)
+
 ```yaml
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
@@ -200,6 +219,7 @@ repos:
 ```
 
 ### GitHub Actions quality gate
+
 ```yaml
 name: Quality Gate
 on: [pull_request]
@@ -216,6 +236,7 @@ jobs:
 ```
 
 ### Husky + lint-staged (`package.json`)
+
 ```json
 {
   "lint-staged": {
@@ -227,14 +248,14 @@ jobs:
 
 ## Key resources
 
-| Resource | URL |
-|----------|-----|
-| TDD Guard | github.com/nizos/tdd-guard |
-| Claude-Flow Templates | github.com/ruvnet/claude-flow/wiki/CLAUDE-MD-Templates |
-| CLAUDE.md Examples | github.com/ArthurClune/claude-md-examples |
-| Awesome Claude Code | github.com/hesreallyhim/awesome-claude-code |
-| MCP SDK CLAUDE.md | github.com/modelcontextprotocol/python-sdk/blob/main/CLAUDE.md |
-| Anthropic Best Practices | anthropic.com/engineering/claude-code-best-practices |
+| Resource                 | URL                                                            |
+| ------------------------ | -------------------------------------------------------------- |
+| TDD Guard                | github.com/nizos/tdd-guard                                     |
+| Claude-Flow Templates    | github.com/ruvnet/claude-flow/wiki/CLAUDE-MD-Templates         |
+| CLAUDE.md Examples       | github.com/ArthurClune/claude-md-examples                      |
+| Awesome Claude Code      | github.com/hesreallyhim/awesome-claude-code                    |
+| MCP SDK CLAUDE.md        | github.com/modelcontextprotocol/python-sdk/blob/main/CLAUDE.md |
+| Anthropic Best Practices | anthropic.com/engineering/claude-code-best-practices           |
 
 ## Conclusion
 

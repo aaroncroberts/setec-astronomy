@@ -19,12 +19,12 @@ NODE_MODULE_VERSION X. This version requires NODE_MODULE_VERSION Y.
 
 ### ABI Reference (Memorize These)
 
-| ABI | Runtime | Use Case |
-|-----|---------|----------|
+| ABI     | Runtime          | Use Case                   |
+| ------- | ---------------- | -------------------------- |
 | **131** | **Node.js 24.x** | CLI tools, scripts, Vitest |
-| **144** | **Electron 40** | GUI apps |
-| 127 | Node.js 22.x | Legacy CLI |
-| 140 | Electron 39 | Legacy GUI |
+| **144** | **Electron 40**  | GUI apps                   |
+| 127     | Node.js 22.x     | Legacy CLI                 |
+| 140     | Electron 39      | Legacy GUI                 |
 
 **Key insight**: Node and Electron **never share ABIs**. Electron 40 bundles Node 24 internally but has ABI 144, not 131.
 
@@ -43,6 +43,7 @@ npm rebuild better-sqlite3
 ```
 
 Verify:
+
 ```bash
 node -e "require('better-sqlite3'); console.log('OK')"
 ```
@@ -50,6 +51,7 @@ node -e "require('better-sqlite3'); console.log('OK')"
 ### Fix for Electron Apps
 
 From todd-lab/client-nextjs:
+
 ```bash
 npm run sqlite:rebuild-electron
 # or directly:
@@ -57,6 +59,7 @@ npx @electron/rebuild -f -w better-sqlite3
 ```
 
 Verify:
+
 ```bash
 npm run test:electron-native
 ```
@@ -64,6 +67,7 @@ npm run test:electron-native
 ### Fix for Dual-ABI Environment
 
 From todd-lab/client-nextjs:
+
 ```bash
 npm run sqlite:setup-dual
 npm run sqlite:verify
@@ -71,13 +75,13 @@ npm run sqlite:verify
 
 ## Tested Scripts Reference (todd-lab)
 
-| Script | Purpose |
-|--------|---------|
-| `npm run sqlite:rebuild-node` | Rebuild for Node.js (CLI) |
-| `npm run sqlite:rebuild-electron` | Rebuild for Electron (GUI) |
-| `npm run sqlite:setup-dual` | Install both ABIs side-by-side |
-| `npm run sqlite:verify` | Verify dual setup |
-| `npm run test:electron-native` | Test native modules IN Electron |
+| Script                            | Purpose                         |
+| --------------------------------- | ------------------------------- |
+| `npm run sqlite:rebuild-node`     | Rebuild for Node.js (CLI)       |
+| `npm run sqlite:rebuild-electron` | Rebuild for Electron (GUI)      |
+| `npm run sqlite:setup-dual`       | Install both ABIs side-by-side  |
+| `npm run sqlite:verify`           | Verify dual setup               |
+| `npm run test:electron-native`    | Test native modules IN Electron |
 
 ## Common Scenarios
 
@@ -88,6 +92,7 @@ npm run sqlite:verify
 **Cause**: You ran `npm run sqlite:rebuild-electron` in todd-lab, npm cache propagated it.
 
 **Fix**:
+
 ```bash
 cd /path/to/todd-bishop
 npm rebuild better-sqlite3
@@ -101,6 +106,7 @@ node -e "require('better-sqlite3'); console.log('OK')"
 **Cause**: Vitest runs in Node.js (ABI 127), Electron needs ABI 140.
 
 **Fix**:
+
 ```bash
 cd .todd/lab/client-nextjs
 npm run sqlite:rebuild-electron
@@ -114,11 +120,13 @@ npm run test:electron-native  # MUST pass before claiming fix works
 **Cause**: Different Node versions in PATH (nvm switching)
 
 **Diagnosis**:
+
 ```bash
 which node && node --version && nvm current
 ```
 
 **Fix**: Ensure consistent Node, then rebuild:
+
 ```bash
 nvm use 22
 npm rebuild better-sqlite3
@@ -133,11 +141,13 @@ npm rebuild better-sqlite3
 **Cause**: `ELECTRON_RUN_AS_NODE=1` in environment makes Electron run as plain Node.
 
 **Diagnosis**:
+
 ```bash
 echo $ELECTRON_RUN_AS_NODE
 ```
 
 **Fix**:
+
 ```bash
 unset ELECTRON_RUN_AS_NODE
 ```
@@ -147,6 +157,7 @@ unset ELECTRON_RUN_AS_NODE
 **Symptom**: Electron partially initializes, `process.type` undefined
 
 **Fix**:
+
 ```bash
 xattr -cr node_modules/electron/dist/Electron.app
 ```
@@ -213,7 +224,7 @@ const { spawn } = require('child_process');
 const electron = require('electron');
 
 spawn(electron, ['tests/electron/electron-test-main.js'], {
-  stdio: 'inherit'
+  stdio: 'inherit',
 }).on('close', process.exit);
 ```
 

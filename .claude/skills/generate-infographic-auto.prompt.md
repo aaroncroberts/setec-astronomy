@@ -3,6 +3,7 @@
 When invoked, execute this workflow:
 
 ## 1. Setup
+
 - Extract directory from args
 - Verify GEMINI_API_KEY exists
 - Find {name}.prompt.md and {name}.content.md files
@@ -13,26 +14,31 @@ When invoked, execute this workflow:
 For each batch:
 
 **Generate:**
+
 ```bash
 python3 .claude/scripts/generate-infographic.py {directory} --batch {current_batch}
 ```
 
 **Evaluate:**
+
 ```
 Use Skill tool: Skill(skill="ig-evaluate", args="{directory}/*.webp")
 ```
 
 **Parse:**
+
 - Read {directory}/{name}.eval.md
 - Extract best score from this batch
 - Track overall best variant and score
 
 **Check:**
+
 - If best_score >= 90: Report winner and STOP
 - If best_score < 90 AND current_batch < 5: Continue to next step
 - If current_batch == 5: Report best result and STOP
 
 **Improve:**
+
 - Read evaluation report recommendations
 - Update {directory}/{name}.prompt.md with fixes:
   - Add exact hex codes for color issues
@@ -41,6 +47,7 @@ Use Skill tool: Skill(skill="ig-evaluate", args="{directory}/*.webp")
   - Add festival imagery for context issues
 
 **Next:**
+
 - current_batch += 1
 - Loop back to Generate
 

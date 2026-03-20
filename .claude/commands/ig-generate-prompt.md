@@ -3,11 +3,13 @@
 **Purpose:** Create properly-scoped infographic prompts that match density tier expectations, using CLI validation to verify before generation.
 
 **Usage:**
+
 ```
 /ig-generate-prompt <topic> <tier> [--output=path]
 ```
 
 **Arguments:**
+
 - `<topic>`: What the infographic shows (e.g., "consent-spectrum", "cost-breakdown")
 - `<tier>`: Density tier (concise|standard|detailed)
 - `[--output]`: Optional output path (defaults to current visual directory)
@@ -21,18 +23,22 @@
 ### Concise Tier: Labels Only (3-5 words max)
 
 **Pattern:**
+
 ```markdown
 ✅ CORRECT (label-only or brief label-value):
+
 - Mandatory facial recognition (3 words)
 - Bundled consent (2 words)
 - Tickets: $750,000 (2 words - label-value OK)
 - Default opt-in (2 words)
 
 ✅ ACCEPTABLE (brief drilldown, ≤5 words total):
+
 - Facial recognition → instant (3 words total)
 - Opt-in required (2 words)
 
 ❌ WRONG (topic - long detail, >5 words total):
+
 - Mandatory facial recognition - no alternatives (5 words, but explanatory)
 - Bundled consent - accept all or entry denied (8 words)
 - Pre-checked boxes - silence assumed as consent (7 words)
@@ -40,6 +46,7 @@
 ```
 
 **Why long drilldown is problematic:** The `[topic - long detail]` pattern signals to the AI "add explanatory text", which:
+
 1. Creates drilldown text on infographic (clutters design)
 2. Reduces white space (AI adds paragraphs)
 3. Inflates tier (Concise → Standard)
@@ -47,6 +54,7 @@
 **Concise tier philosophy:** Trust the AI. "Mandatory facial recognition" or "Tickets: $750,000" is enough - the AI understands context. Don't hand-hold with multi-word explanations.
 
 **Text limits:**
+
 - **Total bullet: 3-5 words MAX** (including label + value/descriptor)
 - Label-value pairs OK if ≤5 words total ("Tickets: $750,000" = 2 words ✅)
 - Brief drilldown OK if ≤5 words total ("Topic → brief" = 3 words ✅)
@@ -55,19 +63,23 @@
 ### Standard Tier: Brief Descriptors (1 sentence max)
 
 **Pattern:**
+
 ```markdown
 ✅ CORRECT (topic + brief detail):
+
 - Mandatory facial recognition - no alternatives offered
 - Bundled consent requires accepting all terms or entry denied
 - Pre-checked boxes assume silence as consent
 
 ❌ WRONG (multi-sentence explanations):
+
 - Mandatory facial recognition - no alternatives offered. Festival-goers must use facial recognition to enter. Paper tickets are not accepted.
 ```
 
 **Why:** Standard tier can have **one level of detail** (topic + descriptor), but not multiple sentences or examples.
 
 **Text limits:**
+
 - Bullet text: 10-15 words MAX
 - One descriptor per concept (topic - detail OR topic + sentence)
 - No multi-sentence explanations
@@ -76,8 +88,10 @@
 ### Detailed Tier: Multi-Level Explanations
 
 **Pattern:**
+
 ```markdown
 ✅ CORRECT (topic + detail + examples + reasoning):
+
 - Mandatory facial recognition - no alternatives offered
   - Festival-goers must use facial recognition to enter
   - Paper tickets and manual ID checks not accepted
@@ -88,6 +102,7 @@
 **Why:** Detailed tier expects **comprehensive specifications** with examples, reasoning, and edge cases.
 
 **Text limits:**
+
 - Bullet text: No limit
 - Multi-level explanations expected
 - Examples and reasoning required
@@ -99,12 +114,12 @@
 
 **After analyzing real prompts, the CLI now uses these ranges:**
 
-| Tier | Concepts | Depth | Complexity | Text per Concept |
-|------|----------|-------|------------|------------------|
-| **Concise** | 5-16 | 1-2 | < 50 | 3-5 words MAX |
-| **Standard (Breadth)** | 15-25 | 1-2 | 50-100 | 10-15 words MAX |
-| **Standard (Depth)** | 8-15 | 3 | 50-100 | 1 sentence MAX |
-| **Detailed** | 25+ | 4+ | 100+ | Multi-level explanations |
+| Tier                   | Concepts | Depth | Complexity | Text per Concept         |
+| ---------------------- | -------- | ----- | ---------- | ------------------------ |
+| **Concise**            | 5-16     | 1-2   | < 50       | 3-5 words MAX            |
+| **Standard (Breadth)** | 15-25    | 1-2   | 50-100     | 10-15 words MAX          |
+| **Standard (Depth)**   | 8-15     | 3     | 50-100     | 1 sentence MAX           |
+| **Detailed**           | 25+      | 4+    | 100+       | Multi-level explanations |
 
 **Key insight:** Complexity = Concepts × Depth. A Concise tier prompt can have 16 concepts if each is shallow (1-2 levels). The text pattern determines depth, not just the bullet count.
 
@@ -115,7 +130,9 @@
 When `/ig-generate-prompt` is invoked:
 
 ### Step 1: Gather Requirements
+
 Ask user (or infer from arguments):
+
 1. **Topic:** What does the infographic show?
 2. **Tier:** Concise, Standard, or Detailed?
 3. **Context:** Embedded (textbook) or Standalone (social media)?
@@ -124,6 +141,7 @@ Ask user (or infer from arguments):
 ### Step 2: Generate Prompt Structure
 
 **Concise tier template:**
+
 ```markdown
 # [Topic Title]
 
@@ -151,6 +169,7 @@ Ask user (or infer from arguments):
 ```
 
 **Standard tier template:**
+
 ```markdown
 # [Topic Title]
 
@@ -159,15 +178,18 @@ Ask user (or infer from arguments):
 ## Data Points
 
 **[Category 1]:**
+
 - [Concept] - [brief descriptor] (10-15 words max)
 - [Concept] - [brief descriptor]
 - [Concept] - [brief descriptor]
 
 **[Category 2]:**
+
 - [Concept] - [brief descriptor]
 - [Concept] - [brief descriptor]
 
 **[Category 3]:**
+
 - [Concept] - [brief descriptor]
 - [Concept] - [brief descriptor]
 
@@ -181,6 +203,7 @@ Ask user (or infer from arguments):
 ```
 
 **Detailed tier template:**
+
 ```markdown
 # [Topic Title]
 
@@ -189,6 +212,7 @@ Ask user (or infer from arguments):
 ## Data Points
 
 **[Category 1]:**
+
 - [Concept] - [descriptor]
   - [Detail line 1]
   - [Detail line 2]
@@ -196,6 +220,7 @@ Ask user (or infer from arguments):
   - [Edge case or annotation]
 
 **[Category 2]:**
+
 - [Concept] - [descriptor]
   - [Detail line 1]
   - [Detail line 2]
@@ -287,6 +312,7 @@ def validate_concise_text_patterns(prompt_text):
 ```
 
 **Key insight:** The validation only flags drilldown patterns if the TOTAL exceeds 5 words. This means:
+
 - "Tickets: $750,000" (2 words) → ✅ PASS (no drilldown check needed)
 - "Default opt-in" (2 words) → ✅ PASS
 - "Topic → brief" (3 words) → ✅ PASS
@@ -397,6 +423,7 @@ Vertical bar chart with 5 categories. Each bar labeled with category name and do
 ```
 
 **Validation:**
+
 - ✅ Concepts: 5 (within 5-16)
 - ✅ Depth: 1 level (labels only, within 1-2)
 - ✅ Text pattern: All bullets 1-3 words ✅
@@ -418,21 +445,25 @@ Simple bar chart showing revenue by category.
 - VIP Upgrades - premium experiences generating $85,000
 
 ## Style
+
 [...]
 ```
 
 **Validation:**
+
 - ❌ Concepts: 5 (within range)
 - ❌ Depth: 3 levels (topic - detail - value, exceeds 1-2)
 - ❌ Text pattern: All bullets 10-15 words (exceeds 3-5 max) ❌
 - ❌ Complexity: 15 (pushes Standard tier)
 
 **Issues:**
+
 - `[topic - detail - value]` pattern creates 3-level hierarchy
 - 10-15 words per bullet signals Standard tier
 - AI will generate explanatory text on infographic
 
 **Fix:** Remove descriptors and values, just use labels:
+
 ```markdown
 - Tickets
 - Food & Beverage
@@ -461,6 +492,7 @@ When `/ig-generate-prompt` is invoked:
 ## Quality Standards
 
 **Prompt is READY when:**
+
 - ✅ CLI validation passes for target tier
 - ✅ Text patterns match tier expectations (3-5 words for Concise, etc.)
 - ✅ No drilldown patterns in Concise tier (topic - detail)
@@ -469,6 +501,7 @@ When `/ig-generate-prompt` is invoked:
 - ✅ Embedded context correct (no title on infographic if textbook visual)
 
 **Prompt needs REVISION when:**
+
 - ❌ CLI validation fails (wrong tier range)
 - ❌ Text patterns wrong (>5 words in Concise tier bullets)
 - ❌ Drilldown patterns detected (topic - detail in Concise)
@@ -478,6 +511,6 @@ When `/ig-generate-prompt` is invoked:
 
 ---
 
-*Command created: January 1, 2026*
-*Purpose: Generate tier-appropriate infographic prompts with text pattern enforcement*
-*Method: Template generation + CLI validation + text pattern analysis*
+_Command created: January 1, 2026_
+_Purpose: Generate tier-appropriate infographic prompts with text pattern enforcement_
+_Method: Template generation + CLI validation + text pattern analysis_

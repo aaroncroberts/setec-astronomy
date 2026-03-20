@@ -23,6 +23,7 @@ bd init --prefix <project-prefix>
 The prefix becomes the issue ID namespace (e.g. `setec` → `setec-1`, `setec-2`).
 
 This creates `.beads/` with:
+
 - `config.yaml` — project configuration
 - `metadata.json` — backend settings
 - `dolt/` — local Dolt database
@@ -39,11 +40,13 @@ bd dolt remote add origin <dolthub-org>/<repo-name>
 ```
 
 Example:
+
 ```bash
 bd dolt remote add origin aaroncroberts/setec-astronomy
 ```
 
 Verify it was added:
+
 ```bash
 bd dolt remote list
 ```
@@ -60,6 +63,7 @@ Add the credential key so it never gets committed:
 ```
 
 Also ensure these are already present (bd init usually adds them):
+
 ```
 .dolt/
 *.db
@@ -84,12 +88,14 @@ bd doctor --verbose
 ```
 
 Expected state:
+
 - ✓ Dolt Connection — Connected successfully
 - ✓ Dolt Schema — All required tables present
 - ✓ Git Hooks — All recommended hooks installed
 - No `✖` errors
 
 Warnings to expect and ignore on a new branch:
+
 - `⚠ Git Upstream` — No upstream for your branch (expected until you push)
 - `⚠ CGO` checks — Skipped, requires CGO build (normal in macOS release builds)
 
@@ -128,6 +134,7 @@ Or: `bd doctor --fix --yes` will untrack it automatically.
 ### "No automatic fix available" warnings from `bd doctor --fix`
 
 Some warnings (upstream branch, plugin version) require manual action:
+
 - **Upstream**: Normal on ephemeral/feature branches — skip unless pushing to remote
 - **Plugin version**: Run `/plugin update beads@beads-marketplace` in Claude Code
 

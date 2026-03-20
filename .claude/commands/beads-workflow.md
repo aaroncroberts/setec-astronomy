@@ -19,6 +19,7 @@ This skill demonstrates **multi-step workflow automation** using beads function 
 ## Purpose
 
 Provide reference implementations for:
+
 - Automated workflow execution using function calls
 - Combining multiple operations into cohesive workflows
 - Error handling and rollback strategies
@@ -27,12 +28,14 @@ Provide reference implementations for:
 ## Available Functions
 
 ### Read Operations
+
 - `beads_list` - Query issues with filters
 - `beads_show` - Get detailed issue information
 - `beads_ready` - Find issues ready to work
 - `beads_stats` - Project statistics
 
 ### Write Operations
+
 - `beads_create` - Create new issues
 - `beads_update` - Update issue fields (status, assignee, notes, priority)
 - `beads_close` - Close completed issues
@@ -45,14 +48,15 @@ Provide reference implementations for:
 **Trigger**: User says "start working on X" or "claim issue X"
 
 **Steps**:
+
 ```typescript
 // 1. Show current details
-const issue = await beads_show({ ids: "todd-bishop-abc" });
+const issue = await beads_show({ ids: 'todd-bishop-abc' });
 
 // 2. Check if issue is ready (no blockers)
 if (issue.blockedBy.length > 0) {
   // Inform user about blockers
-  return "Issue is blocked by: " + issue.blockedBy.join(", ");
+  return 'Issue is blocked by: ' + issue.blockedBy.join(', ');
 }
 
 // 3. Check if already assigned
@@ -62,9 +66,9 @@ if (issue.assignee && issue.assignee !== currentUser) {
 
 // 4. Update status to in_progress and assign
 await beads_update({
-  id: "todd-bishop-abc",
-  status: "in_progress",
-  assignee: currentUser
+  id: 'todd-bishop-abc',
+  status: 'in_progress',
+  assignee: currentUser,
 });
 
 // 5. Confirm to user
@@ -76,14 +80,15 @@ return "You're now working on: " + issue.title;
 **Trigger**: User says "mark X as done" or "close issue X"
 
 **Steps**:
+
 ```typescript
 // 1. Get issue details to see what it blocks
-const issue = await beads_show({ ids: "todd-bishop-abc" });
+const issue = await beads_show({ ids: 'todd-bishop-abc' });
 
 // 2. Close the issue
 await beads_close({
-  ids: "todd-bishop-abc",
-  reason: "Completed successfully"
+  ids: 'todd-bishop-abc',
+  reason: 'Completed successfully',
 });
 
 // 3. Check what was blocked by this issue
@@ -101,12 +106,14 @@ if (issue.blocks.length > 0) {
 
   // 4. Inform user about newly unblocked work
   if (unblocked.length > 0) {
-    return `Issue closed! This unblocked ${unblocked.length} issue(s): ` +
-           unblocked.map(i => i.id + ": " + i.title).join(", ");
+    return (
+      `Issue closed! This unblocked ${unblocked.length} issue(s): ` +
+      unblocked.map((i) => i.id + ': ' + i.title).join(', ')
+    );
   }
 }
 
-return "Issue closed successfully.";
+return 'Issue closed successfully.';
 ```
 
 ### Workflow 3: Bulk Status Update
@@ -114,12 +121,13 @@ return "Issue closed successfully.";
 **Trigger**: User says "close all completed tasks from sprint 5"
 
 **Steps**:
+
 ```typescript
 // 1. Find matching issues
 const issues = await beads_list({
-  type: "task",
-  status: "in_progress",
-  labels: "sprint-5"
+  type: 'task',
+  status: 'in_progress',
+  labels: 'sprint-5',
 });
 
 // 2. Filter to only actually completed ones (ask user or check criteria)
@@ -131,7 +139,7 @@ for (const issue of toClose) {
   try {
     await beads_close({
       ids: issue.id,
-      reason: "Sprint 5 completed"
+      reason: 'Sprint 5 completed',
     });
     results.push({ id: issue.id, success: true });
   } catch (error) {
@@ -140,7 +148,7 @@ for (const issue of toClose) {
 }
 
 // 4. Report results
-const succeeded = results.filter(r => r.success).length;
+const succeeded = results.filter((r) => r.success).length;
 return `Closed ${succeeded}/${toClose.length} issues.`;
 ```
 
@@ -149,17 +157,18 @@ return `Closed ${succeeded}/${toClose.length} issues.`;
 **Trigger**: User says "create task X that depends on Y"
 
 **Steps**:
+
 ```typescript
 // 1. Verify the dependency exists
-const dependency = await beads_show({ ids: "todd-bishop-yyy" });
+const dependency = await beads_show({ ids: 'todd-bishop-yyy' });
 
 // 2. Create the new issue
 const result = await beads_create({
-  title: "Implement feature X",
-  type: "task",
-  priority: "2",
-  description: "Feature implementation with dependency",
-  parent: "todd-bishop-epic"
+  title: 'Implement feature X',
+  type: 'task',
+  priority: '2',
+  description: 'Feature implementation with dependency',
+  parent: 'todd-bishop-epic',
 });
 
 // Extract new issue ID from result
@@ -168,7 +177,7 @@ const newId = result.id; // e.g., "todd-bishop-zzz"
 // 3. Add dependency relationship
 await beads_dep_add({
   issue_id: newId,
-  depends_on: "todd-bishop-yyy"
+  depends_on: 'todd-bishop-yyy',
 });
 
 // 4. Confirm creation
@@ -180,11 +189,12 @@ return `Created ${newId} (blocked by ${dependency.id} until completed)`;
 **Trigger**: User says "triage all new bugs"
 
 **Steps**:
+
 ```typescript
 // 1. Find new bugs (open, unassigned, no priority)
 const newBugs = await beads_list({
-  type: "bug",
-  status: "open"
+  type: 'bug',
+  status: 'open',
   // Filter for unassigned or default priority
 });
 
@@ -193,19 +203,18 @@ for (const bug of newBugs) {
   const details = await beads_show({ ids: bug.id });
 
   // 3. Determine priority based on description/labels
-  let priority = "2"; // default
-  if (details.description.includes("critical") ||
-      details.labels.includes("security")) {
-    priority = "0";
-  } else if (details.description.includes("user-facing")) {
-    priority = "1";
+  let priority = '2'; // default
+  if (details.description.includes('critical') || details.labels.includes('security')) {
+    priority = '0';
+  } else if (details.description.includes('user-facing')) {
+    priority = '1';
   }
 
   // 4. Update priority
   await beads_update({
     id: bug.id,
     priority: priority,
-    notes: "Triaged: Set priority based on severity"
+    notes: 'Triaged: Set priority based on severity',
   });
 }
 
@@ -218,14 +227,13 @@ return `Triaged ${newBugs.length} bugs.`;
 **Trigger**: User says "plan sprint 6 with 5 high-priority tasks"
 
 **Steps**:
+
 ```typescript
 // 1. Find candidate issues (high priority, ready to work)
 const ready = await beads_ready();
 
 // 2. Filter to high-priority only
-const candidates = ready.issues.filter(issue =>
-  issue.priority === "0" || issue.priority === "1"
-);
+const candidates = ready.issues.filter((issue) => issue.priority === '0' || issue.priority === '1');
 
 // 3. Select top N by priority
 const selected = candidates.slice(0, 5);
@@ -234,25 +242,25 @@ const selected = candidates.slice(0, 5);
 for (const issue of selected) {
   await beads_update({
     id: issue.id,
-    labels: "sprint-6",
-    notes: "Added to Sprint 6"
+    labels: 'sprint-6',
+    notes: 'Added to Sprint 6',
   });
 }
 
 // 5. Create sprint epic if needed
 const sprintEpic = await beads_create({
-  title: "Epic: Sprint 6",
-  type: "epic",
-  priority: "1",
+  title: 'Epic: Sprint 6',
+  type: 'epic',
+  priority: '1',
   description: `Sprint 6 goals and tracking.
-Selected issues: ${selected.map(i => i.id).join(", ")}`
+Selected issues: ${selected.map((i) => i.id).join(', ')}`,
 });
 
 // 6. Link issues to sprint epic
 for (const issue of selected) {
   await beads_update({
     id: issue.id,
-    parent: sprintEpic.id
+    parent: sprintEpic.id,
   });
 }
 
@@ -268,16 +276,16 @@ return `Sprint 6 planned with ${selected.length} issues.`;
 const issue = await beads_show({ ids: issueId });
 
 // Check preconditions
-if (issue.status === "completed") {
-  return "Error: Issue is already completed.";
+if (issue.status === 'completed') {
+  return 'Error: Issue is already completed.';
 }
 
 if (issue.blockedBy.length > 0) {
-  return "Error: Cannot start work on blocked issue.";
+  return 'Error: Cannot start work on blocked issue.';
 }
 
 // Proceed with update
-await beads_update({ id: issueId, status: "in_progress" });
+await beads_update({ id: issueId, status: 'in_progress' });
 ```
 
 ### Pattern 2: Partial Failure Recovery
@@ -296,8 +304,10 @@ for (const issueId of issueIds) {
 
 // Report partial success
 if (results.failed.length > 0) {
-  return `Completed ${results.succeeded.length}, failed ${results.failed.length}. ` +
-         `Failed: ${results.failed.map(f => f.id).join(", ")}`;
+  return (
+    `Completed ${results.succeeded.length}, failed ${results.failed.length}. ` +
+    `Failed: ${results.failed.map((f) => f.id).join(', ')}`
+  );
 }
 ```
 
@@ -308,33 +318,32 @@ const createdIds = [];
 
 try {
   // Create multiple related issues
-  const epic = await beads_create({ title: "Epic", type: "epic" });
+  const epic = await beads_create({ title: 'Epic', type: 'epic' });
   createdIds.push(epic.id);
 
   const feature = await beads_create({
-    title: "Feature",
-    type: "feature",
-    parent: epic.id
+    title: 'Feature',
+    type: 'feature',
+    parent: epic.id,
   });
   createdIds.push(feature.id);
 
   const task = await beads_create({
-    title: "Task",
-    type: "task",
-    parent: feature.id
+    title: 'Task',
+    type: 'task',
+    parent: feature.id,
   });
   createdIds.push(task.id);
-
 } catch (error) {
   // Rollback: close all created issues
   for (const id of createdIds) {
     await beads_close({
       ids: id,
-      reason: "Rollback due to error: " + error.message
+      reason: 'Rollback due to error: ' + error.message,
     });
   }
 
-  return "Workflow failed and was rolled back.";
+  return 'Workflow failed and was rolled back.';
 }
 ```
 
@@ -345,27 +354,28 @@ try {
 **User**: "Prepare standup report"
 
 **Workflow**:
+
 ```typescript
 // Get stats
 const stats = await beads_stats();
 
 // Get my in-progress work
 const myWork = await beads_list({
-  status: "in_progress",
-  assignee: currentUser
+  status: 'in_progress',
+  assignee: currentUser,
 });
 
 // Get completed since yesterday
 const completed = await beads_list({
-  status: "completed",
-  assignee: currentUser
+  status: 'completed',
+  assignee: currentUser,
   // Filter by updated: "since yesterday"
 });
 
 // Get blocked items
 const blocked = await beads_list({
-  status: "blocked",
-  assignee: currentUser
+  status: 'blocked',
+  assignee: currentUser,
 });
 
 // Format report
@@ -373,13 +383,13 @@ return `
 📊 Standup Report for ${currentUser}
 
 Yesterday:
-${completed.map(i => "✅ " + i.title).join("\n")}
+${completed.map((i) => '✅ ' + i.title).join('\n')}
 
 Today:
-${myWork.map(i => "🔄 " + i.title).join("\n")}
+${myWork.map((i) => '🔄 ' + i.title).join('\n')}
 
 Blockers:
-${blocked.map(i => "🚫 " + i.title + " (blocked by: " + i.blockedBy.join(", ") + ")").join("\n")}
+${blocked.map((i) => '🚫 ' + i.title + ' (blocked by: ' + i.blockedBy.join(', ') + ')').join('\n')}
 `;
 ```
 
@@ -388,32 +398,33 @@ ${blocked.map(i => "🚫 " + i.title + " (blocked by: " + i.blockedBy.join(", ")
 **User**: "Prepare v1.2.0 release"
 
 **Workflow**:
+
 ```typescript
 // 1. Create release epic
 const release = await beads_create({
-  title: "Epic: v1.2.0 Release",
-  type: "epic",
-  priority: "1",
-  description: "Track v1.2.0 release preparation"
+  title: 'Epic: v1.2.0 Release',
+  type: 'epic',
+  priority: '1',
+  description: 'Track v1.2.0 release preparation',
 });
 
 // 2. Create release tasks
 const tasks = [
-  { title: "Update CHANGELOG.md", priority: "1" },
-  { title: "Run full test suite", priority: "0" },
-  { title: "Update version in package.json", priority: "1" },
-  { title: "Create release notes", priority: "2" },
-  { title: "Tag release in git", priority: "0" }
+  { title: 'Update CHANGELOG.md', priority: '1' },
+  { title: 'Run full test suite', priority: '0' },
+  { title: 'Update version in package.json', priority: '1' },
+  { title: 'Create release notes', priority: '2' },
+  { title: 'Tag release in git', priority: '0' },
 ];
 
 const taskIds = [];
 for (const task of tasks) {
   const result = await beads_create({
     title: task.title,
-    type: "task",
+    type: 'task',
     priority: task.priority,
     parent: release.id,
-    labels: "release,v1.2.0"
+    labels: 'release,v1.2.0',
   });
   taskIds.push(result.id);
 }
@@ -422,7 +433,7 @@ for (const task of tasks) {
 for (let i = 1; i < taskIds.length; i++) {
   await beads_dep_add({
     issue_id: taskIds[i],
-    depends_on: taskIds[i - 1]
+    depends_on: taskIds[i - 1],
   });
 }
 
@@ -436,11 +447,12 @@ First task (${taskIds[0]}) is ready to start.`;
 **User**: "Triage new bugs from last week"
 
 **Workflow**:
+
 ```typescript
 // 1. Find new bugs
 const newBugs = await beads_list({
-  type: "bug",
-  status: "open"
+  type: 'bug',
+  status: 'open',
   // Filter: created in last week
 });
 
@@ -452,10 +464,9 @@ const medium = [];
 for (const bug of newBugs) {
   const details = await beads_show({ ids: bug.id });
 
-  if (details.labels.includes("security") ||
-      details.description.includes("data loss")) {
+  if (details.labels.includes('security') || details.description.includes('data loss')) {
     critical.push(bug);
-  } else if (details.labels.includes("user-facing")) {
+  } else if (details.labels.includes('user-facing')) {
     high.push(bug);
   } else {
     medium.push(bug);
@@ -466,24 +477,24 @@ for (const bug of newBugs) {
 for (const bug of critical) {
   await beads_update({
     id: bug.id,
-    priority: "0",
-    notes: "Triaged as critical"
+    priority: '0',
+    notes: 'Triaged as critical',
   });
 }
 
 for (const bug of high) {
   await beads_update({
     id: bug.id,
-    priority: "1",
-    notes: "Triaged as high priority"
+    priority: '1',
+    notes: 'Triaged as high priority',
   });
 }
 
 for (const bug of medium) {
   await beads_update({
     id: bug.id,
-    priority: "2",
-    notes: "Triaged as medium priority"
+    priority: '2',
+    notes: 'Triaged as medium priority',
   });
 }
 
@@ -512,22 +523,25 @@ Total triaged: ${newBugs.length}
 ## Anti-Patterns to Avoid
 
 ❌ **Don't skip validation**:
+
 ```typescript
 // Bad: Updating without checking current state
-await beads_update({ id: issueId, status: "in_progress" });
+await beads_update({ id: issueId, status: 'in_progress' });
 ```
 
 ✅ **Do validate first**:
+
 ```typescript
 // Good: Check current state and blockers
 const issue = await beads_show({ ids: issueId });
 if (issue.blockedBy.length > 0) {
-  return "Cannot start: Issue is blocked";
+  return 'Cannot start: Issue is blocked';
 }
-await beads_update({ id: issueId, status: "in_progress" });
+await beads_update({ id: issueId, status: 'in_progress' });
 ```
 
 ❌ **Don't ignore errors**:
+
 ```typescript
 // Bad: Fire and forget
 for (const id of ids) {
@@ -536,6 +550,7 @@ for (const id of ids) {
 ```
 
 ✅ **Do track results**:
+
 ```typescript
 // Good: Await and handle errors
 const results = [];
@@ -600,12 +615,14 @@ beads_dep_add({
 ## State Transition Rules
 
 Valid status transitions:
+
 - `open` → `in_progress` (start work)
 - `in_progress` → `completed` (finish work via close)
 - `in_progress` → `open` (pause work)
 - `blocked` → `open` (blockers resolved automatically)
 
 Invalid transitions:
+
 - `open` → `completed` (must go through in_progress)
 - `completed` → `open` (cannot reopen, create new issue)
 
@@ -632,13 +649,13 @@ When testing this skill with Gemini:
 
 ## Common User Requests
 
-| User Says | Workflow |
-|-----------|----------|
-| "Start working on X" | Start Work (validate → update status → assign) |
-| "Mark X as done" | Complete Work (close → report unblocked) |
-| "Close all sprint 5 tasks" | Bulk Status Update |
-| "Create task X depending on Y" | Create with Dependencies |
-| "Triage new bugs" | Triage and Prioritize |
-| "Plan sprint 6" | Sprint Planning |
-| "What did I complete today?" | Daily Standup (read-only) |
-| "Prepare release X" | Release Preparation |
+| User Says                      | Workflow                                       |
+| ------------------------------ | ---------------------------------------------- |
+| "Start working on X"           | Start Work (validate → update status → assign) |
+| "Mark X as done"               | Complete Work (close → report unblocked)       |
+| "Close all sprint 5 tasks"     | Bulk Status Update                             |
+| "Create task X depending on Y" | Create with Dependencies                       |
+| "Triage new bugs"              | Triage and Prioritize                          |
+| "Plan sprint 6"                | Sprint Planning                                |
+| "What did I complete today?"   | Daily Standup (read-only)                      |
+| "Prepare release X"            | Release Preparation                            |

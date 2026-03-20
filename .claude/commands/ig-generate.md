@@ -3,6 +3,7 @@
 **Purpose:** Fully automated infographic generation using Gemini web automation (Playwright)
 
 **Workflow:**
+
 1. Reads prompt.md and content.md from directory
 2. Opens Gemini in Chrome browser with parallel tabs
 3. Generates 3 variants simultaneously
@@ -21,6 +22,7 @@
 ### Standalone vs. Embedded Context
 
 **EMBEDDED (DEFAULT for EventAI curriculum):**
+
 - **Location:** `/docs/writing/*/visuals/` (textbook/article content)
 - **Usage:** Figure within narrative, referenced as "Figure X.X"
 - **Title:** ❌ NO title on infographic (title is in figure caption or surrounding text)
@@ -28,6 +30,7 @@
 - **Design:** Clean, data-focused, minimal explanatory text (labels only)
 
 **STANDALONE:**
+
 - **Location:** `/docs/social/`, `/docs/marketing/`, presentations
 - **Usage:** Independent visual (social media post, slide, standalone document)
 - **Title:** ✅ Title REQUIRED on infographic (clear, prominent)
@@ -37,13 +40,16 @@
 ### Prompt Adjustments by Context
 
 **For EMBEDDED infographics (MOST EventAI CURRICULUM):**
+
 ```markdown
 ❌ OMIT from prompt:
+
 - "Add a clear title to the infographic"
 - "Include context statement explaining what this shows"
 - "Self-contained design with full context"
 
 ✅ INCLUDE in prompt:
+
 - "Data visualization only, no title (title will be in figure caption)"
 - "Minimal text: labels and values only, no explanatory paragraphs"
 - "Clean, focused design that integrates with surrounding narrative"
@@ -51,8 +57,10 @@
 ```
 
 **For STANDALONE infographics:**
+
 ```markdown
 ✅ INCLUDE in prompt:
+
 - "Clear, prominent title at top of infographic"
 - "Subtitle or context statement explaining significance"
 - "Self-contained design understandable without external text"
@@ -76,6 +84,7 @@
 ### The Three-Tier Framework
 
 **1. Concise Tier** (Minimal Detail)
+
 - Headlines + 3-5 key stats
 - 15-30 second comprehension
 - 40%+ white space
@@ -83,6 +92,7 @@
 - **Example:** Title + "13x ROI, 8-9 month payback, $6.87M net benefit" (no breakdowns)
 
 **2. Standard Tier** (Balanced Detail) **← DEFAULT**
+
 - Key breakdowns with 3-4 components each
 - 30-60 second comprehension
 - 30% white space
@@ -90,6 +100,7 @@
 - **Example:** Title + Investment breakdown (4 components w/ values) + Benefits breakdown (4 components w/ values) + ROI summary
 
 **3. Detailed Tier** (Comprehensive)
+
 - Explanatory annotations, case studies, year-by-year detail
 - 2-3 minute comprehension
 - 25%+ white space
@@ -109,12 +120,14 @@
 **Philosophy:** Few concepts, shallow depth. Labels without extensive explanations.
 
 **Tier Definition:**
+
 - **Concept count:** 5-8 distinct ideas/requirements
 - **Hierarchy depth:** 1-2 levels (label, maybe brief descriptor)
 - **Example:** "DEFAULT OPT-IN" (label only) = 1 level ✅
 - **Too deep:** "DEFAULT OPT-IN - biometric on unless disabled" = 2 levels, pushing Standard ⚠️
 
 **Required Elements:**
+
 1. **Visual description** (1-2 sentences): What to show
 2. **Key data points** (5-8 labels): Simple labels, minimal explanatory text
 3. **Color palette** (1 line): EventAI hex codes only
@@ -122,10 +135,12 @@
 5. **Context** (1 line): Standalone vs. embedded, festival context
 
 **Optional Elements (use sparingly):**
+
 - Typography guidance (ONLY if critical, e.g., "16pt minimum body text")
 - Accessibility notes (ONLY if non-standard, e.g., color-blind considerations)
 
 **AVOID in Concise prompts:**
+
 - ❌ Multi-level explanations (label + descriptor + detail = too deep)
 - ❌ Exhaustive "CRITICAL" sections with 10+ requirements
 - ❌ Detailed AVOID lists (trust AI to avoid obviously bad practices)
@@ -134,44 +149,52 @@
 - ❌ Comprehensive style guides embedded in prompt
 
 **Concise Prompt Template:**
+
 ```markdown
 # [Visual Name]
 
 [1-2 sentence description of what to visualize]
 
 ## Data Points
+
 - [Key stat 1]
 - [Key stat 2]
 - [Key stat 3]
 
 ## Style
+
 - Colors: [hex codes]
 - White space: 40%+ composition
 - Context: [embedded/standalone], [festival context note]
 - [Any critical accessibility requirements]
 
 ## Structure
+
 [2-3 sentences describing layout/organization]
 ```
 
 **Example Concise Prompt (2,500 chars):**
+
 ```markdown
 # Consent Architecture Spectrum
 
 Horizontal spectrum showing coercive to voluntary consent designs for festival biometric systems.
 
 ## Data Points
+
 - Coercive (left): Mandatory facial recognition, bundled consent, pre-checked boxes, hidden terms
 - Problematic (middle): Default opt-in, soft penalties, confusing interfaces
 - Voluntary (right): Clear opt-in, genuine alternatives, granular controls, plain language
 
 ## Style
+
 - Colors: Red (#FF6B6B), Orange (#ED8936), Green (#48BB78), White background (#FFFFFF)
 - White space: 40%+ composition, generous margins and padding
 - Context: Embedded (textbook), festival entry/biometric scenarios
 - Accessibility: Large icons (❌ ⚠️ ✅) for each zone, zone labels visible
 
 ## Structure
+
 Left-to-right progression with three color zones. Each zone shows 3-4 examples with icons. Bottom includes GDPR Article 7 and 9 principles.
 ```
 
@@ -182,11 +205,13 @@ Left-to-right progression with three color zones. Each zone shows 3-4 examples w
 **Philosophy:** Go wide OR go deep, but NOT BOTH.
 
 **Tier Definition:**
+
 - **Option A (Breadth):** 10-15 concepts at 1-2 levels deep (many labels, minimal explanations)
 - **Option B (Depth):** 5-8 concepts at 3 levels deep (fewer labels, more detail per concept)
 - **Complexity:** Medium (expand ONE dimension, not both)
 
 **Required Elements:**
+
 1. Visual description with purpose statement
 2. Data structure (sections, categories, breakdowns)
 3. Full color palette with application notes
@@ -196,6 +221,7 @@ Left-to-right progression with three color zones. Each zone shows 3-4 examples w
 7. AVOID list (top 5-7 critical items only)
 
 **Standard Prompt Complexity:**
+
 - Choose breadth (many concepts, shallow) OR depth (few concepts, detailed)
 - 4-6 major sections
 - 15-25 total bullet points
@@ -212,11 +238,13 @@ Left-to-right progression with three color zones. Each zone shows 3-4 examples w
 **Philosophy:** Comprehensive specification - many concepts with deep detail.
 
 **Tier Definition:**
+
 - **Concept count:** 20-30+ distinct ideas/requirements
 - **Hierarchy depth:** 4+ levels per concept (label + descriptor + detail + examples/reasoning)
 - **Complexity:** High (BOTH dimensions expanded)
 
 **Required Elements:**
+
 - All Standard elements plus:
 - Detailed examples with line-by-line specs
 - Comprehensive style guide sections
@@ -226,6 +254,7 @@ Left-to-right progression with three color zones. Each zone shows 3-4 examples w
 - Print production specifications
 
 **Use Detailed tier ONLY for:**
+
 - Complex multi-layer infographics
 - Educational materials requiring precision
 - High-stakes publication visuals
@@ -243,6 +272,7 @@ Left-to-right progression with three color zones. Each zone shows 3-4 examples w
 
 **Over-Specification Warning:**
 If your prompt exceeds these ranges, you're likely over-specifying. Simplify by:
+
 1. Removing redundant requirements
 2. Trusting AI capabilities (don't specify obvious things)
 3. Consolidating related requirements
@@ -278,6 +308,7 @@ pip install -e .
 ```
 
 This installs:
+
 - `gemini-generate` CLI command (installed to `~/.local/bin/`)
 - Playwright dependency for browser automation
 
@@ -295,6 +326,7 @@ gemini-generate --help # Should show usage
 ```
 
 **Requirements:**
+
 - Chrome browser with signed-in Google account
 - Gemini access at gemini.google.com
 
@@ -320,12 +352,14 @@ gemini-generate \
 ```
 
 **Required arguments:**
+
 - `--content`: Path to content markdown file
 - `--prompt`: Path to prompt/style instructions file
 - `--output-dir`: Directory for generated files
 - `--name`: Base filename for outputs
 
 **Generated files:**
+
 - `barriers-1.png` through `barriers-3.png`
 - `barriers-1.webp` through `barriers-3.webp`
 
@@ -370,33 +404,39 @@ barriers/
 ```
 
 **content.md** = The raw, unfiltered information to visualize
+
 - Source data, statistics, facts, quotes
 - No formatting, no design guidance
 - Just the content dump
 
 **Example content.md:**
+
 ```markdown
 Festival Revenue Breakdown (10,000 attendees):
+
 - Ticket sales: $750,000
 - Food & Beverage: $180,000
 - Merchandise: $95,000
 - Sponsorships: $120,000
 - VIP Upgrades: $85,000
-Total: $1.23M
+  Total: $1.23M
 ```
 
 **prompt.md** = The infographic specification (visual design)
+
 - Layout, style, colors, typography
 - How to present the data visually
 - NO raw data (that's in content.md)
 
 **Example prompt.md:**
+
 ```markdown
 # Festival Revenue Breakdown
 
 Create a vertical bar chart showing revenue by category.
 
 Style:
+
 - Colors: Deep purple (#6B46C1), electric coral (#FF6B6B), sky blue (#4299E1)
 - White space: 40%+ composition
 - Typography: Clean sans-serif, 16pt minimum
@@ -420,6 +460,7 @@ and dollar amount. Total revenue displayed prominently at top.
 ```
 
 **Advantages over API:**
+
 - No API key needed (uses your Google account)
 - No rate limits or quotas (free unlimited use)
 - Same quality as NotebookLM (uses Gemini Imagen)
@@ -486,6 +527,7 @@ todd-image-convert barriers-*.png \
 ## No Limits - Free Unlimited Use
 
 **Browser Automation Benefits:**
+
 - ✅ No daily quotas or rate limits
 - ✅ No API key required
 - ✅ Free unlimited use (via your Google account)
@@ -493,6 +535,7 @@ todd-image-convert barriers-*.png \
 - ✅ Same quality as NotebookLM/Gemini web interface
 
 **Realistic Usage:**
+
 - 3 variants per batch (~95 seconds total)
 - ~5 batches max to reach 90% (15 images, ~8 minutes)
 - Can generate unlimited infographics per day
@@ -569,12 +612,14 @@ pip install google-generativeai
 ### "File not found: prompt.md"
 
 **Expected names:**
+
 - `{directory-name}.prompt.md` (e.g., `barriers.prompt.md`)
 - OR `prompt.md` (fallback)
 
 ### "todd-image-convert failed"
 
 **Check environment variables:**
+
 ```bash
 export PYTHONPATH="/Users/ja/Documents/CodeProjects/todd-lab/.todd/lib/py/todd-media/image-converter:$PYTHONPATH"
 export DYLD_LIBRARY_PATH="/opt/homebrew/opt/vips/lib:$DYLD_LIBRARY_PATH"
@@ -583,10 +628,12 @@ export DYLD_LIBRARY_PATH="/opt/homebrew/opt/vips/lib:$DYLD_LIBRARY_PATH"
 ### "Rate limit exceeded"
 
 **Free tier limits:**
+
 - 500/day
 - ~10/minute
 
 **Wait and retry:**
+
 - Script auto-pauses 6 seconds between generations
 - If hit daily limit, try next day
 
@@ -623,6 +670,7 @@ python3 .claude/scripts/generate-infographic.py barriers/ --skip-convert
 ## Quality Targets
 
 **Evaluation Scores:**
+
 - **< 70%:** Poor - major issues
 - **70-79%:** Fair - significant improvements needed
 - **80-89%:** Good - minor refinements recommended
@@ -651,6 +699,7 @@ python3 .claude/scripts/generate-infographic.py barriers/ --skip-convert
 ### Gemini Web Interface Equivalence
 
 **Same underlying model:**
+
 - gemini.google.com "Create images" = Gemini Imagen
 - Same quality as NotebookLM infographic generation
 - Browser automation gives programmatic access
@@ -665,6 +714,7 @@ python3 .claude/scripts/generate-infographic.py barriers/ --skip-convert
 ### Browser Doesn't Launch
 
 **Check installation:**
+
 ```bash
 which gemini-generate  # Should show ~/.local/bin/gemini-generate
 playwright install chromium  # Install browsers if missing
@@ -691,6 +741,7 @@ gemini-generate --chrome-profile "Profile 1" ...
 ### Generation Timeout
 
 **If variants timeout after 60s:**
+
 1. Check Gemini is accessible at gemini.google.com
 2. Ensure you're logged into Google account
 3. Try with fewer variants (--variants 1)
@@ -699,6 +750,7 @@ gemini-generate --chrome-profile "Profile 1" ...
 ### Download Fails
 
 **If downloads fail:**
+
 - Ensure Downloads folder is accessible
 - Close other Chrome windows/tabs that might conflict
 - Try again with --batch parameter to resume
@@ -742,12 +794,14 @@ gemini-generate --chrome-profile "Profile 1" ...
 ### Why Load Best Practices First?
 
 **Without `/infographics-bestpractices`:**
+
 - Generic prompt creation (no Tufte principles)
 - Missing EventAI color palette specifications
 - No white space or cruft guidance
 - Evaluation uses basic criteria only
 
 **With `/infographics-bestpractices`:**
+
 - ✅ Prompts include data-ink ratio requirements
 - ✅ EventAI palette hex codes specified
 - ✅ Professional + whimsy balance articulated
@@ -758,19 +812,25 @@ gemini-generate --chrome-profile "Profile 1" ...
 ### Quality Improvement Example
 
 **Before (without best practices loaded):**
+
 ```markdown
 # barriers.prompt.md
+
 Create an infographic showing barriers to AI adoption.
 Use EventAI colors. Make it professional but fun.
 ```
+
 → **Result:** 72% score (vague guidance, generic design)
 
 **After (with /infographics-bestpractices loaded):**
+
 ```markdown
 # barriers.prompt.md
+
 Create an information-dense infographic showing barriers to AI adoption.
 
 CRITICAL REQUIREMENTS:
+
 - Deep purple (#6B46C1), electric coral (#FF6B6B), sky blue (#4299E1)
 - Data-ink ratio: minimal decoration, every element serves information
 - 30%+ white space for breathing room
@@ -780,6 +840,7 @@ CRITICAL REQUIREMENTS:
 - 4.5:1 minimum contrast ratio, non-color-dependent information
 - Maximum 2 font families: clean sans-serif for body
 ```
+
 → **Result:** 89% score (first generation near target!)
 
 ---
@@ -789,21 +850,25 @@ CRITICAL REQUIREMENTS:
 ### Example 1: EMBEDDED Infographic (EventAI Curriculum)
 
 **Context:**
+
 - Location: `docs/writing/2-education/visuals/academic-integration/`
 - Usage: Figure 2.2 in textbook section on "Academic Integration Barriers"
 - Surrounding text provides title, context, and interpretation
 
 **Correct Prompt (NO TITLE):**
+
 ```markdown
 Create an information-dense data visualization showing academic integration barriers.
 
 VISUAL CONTENT ONLY (NO TITLE - title is in figure caption):
+
 - Three barrier categories with percentage breakdowns
 - Each category shows 3-4 specific obstacles with values
 - Clean, focused design with labels and data only
 - Minimal explanatory text (surrounding narrative provides context)
 
 EventAI Style:
+
 - Deep purple (#6B46C1), electric coral (#FF6B6B), sky blue (#4299E1)
 - 30%+ white space, clean composition
 - Festival context where appropriate
@@ -811,24 +876,26 @@ EventAI Style:
 - NO decorative borders or unnecessary embellishments
 
 Technical:
+
 - High-resolution, print-ready quality
 - Maximum data-ink ratio (minimal cruft)
 ```
 
 **Narrative Integration:**
+
 ```markdown
 ## Academic Integration Barriers
 
-Traditional academic institutions face three primary barriers when 
-integrating AI into curricula: structural obstacles (42%), cultural 
+Traditional academic institutions face three primary barriers when
+integrating AI into curricula: structural obstacles (42%), cultural
 resistance (35%), and resource constraints (23%).
 
 **Figure 2.2: Academic Integration Barriers**
 
 [INFOGRAPHIC HERE - NO TITLE ON IMAGE]
 
-As Figure 2.2 illustrates, structural obstacles represent the largest 
-impediment, comprising curriculum rigidity (18%), accreditation delays 
+As Figure 2.2 illustrates, structural obstacles represent the largest
+impediment, comprising curriculum rigidity (18%), accreditation delays
 (12%), and departmental silos (12%)...
 ```
 
@@ -837,43 +904,50 @@ impediment, comprising curriculum rigidity (18%), accreditation delays
 ### Example 2: STANDALONE Infographic (Social Media)
 
 **Context:**
+
 - Location: `docs/social/linkedin-posts/`
 - Usage: LinkedIn post graphic (standalone, no surrounding text)
 - Must be self-contained and understandable alone
 
 **Correct Prompt (WITH TITLE):**
+
 ```markdown
-Create a self-contained infographic titled "Academic Integration Barriers" 
+Create a self-contained infographic titled "Academic Integration Barriers"
 showing why universities struggle to adopt AI in curricula.
 
 MUST INCLUDE:
+
 - Clear, prominent title: "Academic Integration Barriers"
 - Subtitle: "Why Universities Struggle with AI Curriculum Integration"
 - Context statement: "42% cite structural obstacles as primary barrier"
 
 Three barrier categories with breakdowns:
+
 - Structural Obstacles (42%)
 - Cultural Resistance (35%)
 - Resource Constraints (23%)
 
 EventAI Style:
+
 - Deep purple (#6B46C1), electric coral (#FF6B6B), sky blue (#4299E1)
 - Professional + whimsy balance
 - Festival context (academic setting with event metaphors)
 - Self-contained design (understandable without article)
 
 Include:
+
 - Source citation at bottom
 - EventAI branding (subtle)
 ```
 
 **Social Media Post:**
+
 ```markdown
 [INFOGRAPHIC WITH TITLE/SUBTITLE/CONTEXT]
 
 Universities face three primary barriers to AI curriculum integration.
 
-Structural obstacles (42%) lead the way, followed by cultural resistance 
+Structural obstacles (42%) lead the way, followed by cultural resistance
 (35%) and resource constraints (23%).
 
 Learn more: [link to full article]
@@ -890,7 +964,7 @@ Learn more: [link to full article]
 
 **Figure 2.2: Academic Integration Barriers**
 
-[INFOGRAPHIC WITH "ACADEMIC INTEGRATION BARRIERS" TITLE]  ← WRONG!
+[INFOGRAPHIC WITH "ACADEMIC INTEGRATION BARRIERS" TITLE] ← WRONG!
 
 [More narrative...]
 ```
@@ -898,6 +972,7 @@ Learn more: [link to full article]
 **Issue:** Title appears twice (redundant), breaks narrative flow
 
 **Solution:** Regenerate with corrected prompt (NO TITLE):
+
 ```bash
 # Update prompt.md to explicitly state NO TITLE
 # Add: "Data visualization only, no title (title in caption)"
@@ -917,8 +992,8 @@ Learn more: [link to full article]
 
 ---
 
-*Skill created: December 29, 2025*
-*Powered by: Gemini Imagen via browser automation (Playwright)*
-*Method: Parallel tab generation at gemini.google.com*
-*CLI: gemini-generate (installed from .todd/lib/py/todd-media)*
-*Integration: EventAI + Lemmy Content Generation System*
+_Skill created: December 29, 2025_
+_Powered by: Gemini Imagen via browser automation (Playwright)_
+_Method: Parallel tab generation at gemini.google.com_
+_CLI: gemini-generate (installed from .todd/lib/py/todd-media)_
+_Integration: EventAI + Lemmy Content Generation System_

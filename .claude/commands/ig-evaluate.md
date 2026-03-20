@@ -7,6 +7,7 @@ Comprehensively evaluate generated infographics (from NotebookLM, Nano Banana, o
 ## Core Approach
 
 You are a visual design critic and content verifier for academic/professional infographics. Analyze provided infographic files with extreme attention to:
+
 1. **Style Adherence**: Compliance with EventAI Visual Identity Guide
 2. **Best Practices**: Application of Tufte principles and professional infographic standards
 3. **Data Accuracy**: Verification of all statistics and claims against source material
@@ -22,18 +23,21 @@ You are a visual design critic and content verifier for academic/professional in
 ### The Three-Tier Framework
 
 **1. Concise Tier** (Minimal Detail)
+
 - Headlines + 3-5 key stats only
 - 15-30 second comprehension
 - 40%+ white space required
 - **When to identify:** Extremely minimal text, no breakdowns, social media format
 
 **2. Standard Tier** (Balanced Detail) **← DEFAULT ASSUMPTION**
+
 - Key breakdowns with 3-4 components each
 - 30-60 second comprehension
 - 30% white space target
 - **When to identify:** Most infographics fall here - balanced detail without overwhelming
 
 **3. Detailed Tier** (Comprehensive)
+
 - Explanatory annotations, case studies, multiple detail layers
 - 2-3 minute close reading required
 - 25%+ white space acceptable
@@ -42,6 +46,7 @@ You are a visual design critic and content verifier for academic/professional in
 ### Tier Identification Examples
 
 **Standard tier indicators:**
+
 - Stacked bars/charts show components with $ values but no explanatory text
 - 3-4 bullet points per section (not paragraphs)
 - Labels are brief (category name + value)
@@ -49,6 +54,7 @@ You are a visual design critic and content verifier for academic/professional in
 - **Example:** Dynamic-pricing-2 (three sections, brief labels, readable breakdowns)
 
 **Detailed tier indicators:**
+
 - Each component has 2-3 sentences of explanation
 - Year-by-year breakdowns or timelines with annotations
 - Case study callout boxes with multiple statistics
@@ -60,14 +66,17 @@ You are a visual design critic and content verifier for academic/professional in
 ### Evaluation Criteria by Tier
 
 **DO NOT penalize an infographic for:**
+
 - ❌ "Too simple" if it's appropriately Concise tier
 - ❌ "Too detailed" if it's appropriately Detailed tier
 
 **DO penalize for:**
+
 - ✅ Tier mismatch (e.g., claims to be Standard but has Detailed-level text density)
 - ✅ Crossing tier boundaries inappropriately (Standard with occasional Detailed paragraphs = inconsistent)
 
 **Scoring adjustments:**
+
 - **Concise tier:** Penalize insufficient white space (<40%), penalize detail creep
 - **Standard tier:** Penalize if too sparse OR too dense (target 30% white space, balanced detail)
 - **Detailed tier:** Penalize if cognitive overload or accessibility fails (text too small, overwhelming)
@@ -79,16 +88,19 @@ You are a visual design critic and content verifier for academic/professional in
 ### Primary References (Fixed Best Practices)
 
 **1. EventAI Visual Identity Guide**
+
 - Location: `docs/lemmy/style-guide/eventai-visual-identity.md`
 - Purpose: Brand color palette, typography, layout standards
 - Key elements: Deep purple (#6B46C1), electric coral (#FF6B6B), sky blue (#4299E1)
 
 **2. Infographic Best Practices**
+
 - Location: `docs/lemmy/research/infographics-best-practices.md`
 - Purpose: Tufte principles, data-ink ratio, professional design standards
 - Key elements: White space (30%+), minimal cruft, data integrity
 
 **3. Source Material** (REQUIRED - will prompt if not provided)
+
 - Location: Varies (e.g., `docs/writing/*/visuals/*/VIS-*.source.md`)
 - Purpose: Verify data accuracy, ensure claims match authoritative sources
 - Key elements: Statistics, percentages, dates, citations
@@ -96,6 +108,7 @@ You are a visual design critic and content verifier for academic/professional in
 ### Optional Context (Can Override Defaults)
 
 **4. Custom Evaluation Criteria**
+
 - User can provide specific focus areas or override default best practices
 - Example: "Prioritize print readability over web optimization"
 - Example: "Evaluate for accessibility compliance (WCAG AAA)"
@@ -107,6 +120,7 @@ You are a visual design critic and content verifier for academic/professional in
 ### Phase 1: File Discovery & Context Gathering
 
 **Step 1: Identify infographic files**
+
 ```bash
 # User provides paths, or command searches for common patterns
 /ig-evaluate docs/writing/1-transformation/visuals/eventai-timeline/*.webp
@@ -123,16 +137,19 @@ You are a visual design critic and content verifier for academic/professional in
 ## Context Identification
 
 **File location analysis:**
+
 - Path: docs/writing/2-education/visuals/academic-integration/academic-integration-3.webp
 - Parent directory: `/writing/` (narrative content) ✅ Embedded context likely
 - Visual directory: `/visuals/` (supporting narrative) ✅ Embedded context
 
 **Prompt file analysis:**
+
 - Check VIS-X.X-GENERATE-INSTRUCTIONS.md for use case
 - Look for: "textbook", "curriculum", "figure", "embedded" → Embedded
 - Look for: "social media", "standalone", "presentation" → Standalone
 
 **Content location indicators:**
+
 - In `/docs/writing/*/visuals/` → **Embedded** (supporting textbook/article)
 - In `/docs/social/` or `/docs/marketing/` → **Standalone** (social/marketing use)
 - Referenced as "Figure X.X" in narrative → **Embedded**
@@ -143,6 +160,7 @@ Unless clearly indicated otherwise, visuals in `/docs/writing/*/visuals/` are **
 **Identified context: [STANDALONE | EMBEDDED]**
 
 **Evaluation adjustments:**
+
 - If EMBEDDED: ❌ DO NOT expect title on infographic (would be redundant)
 - If EMBEDDED: ❌ DO NOT expect context statements (provided by narrative)
 - If EMBEDDED: ✅ EXPECT minimal explanatory text (labels and data only)
@@ -152,8 +170,10 @@ Unless clearly indicated otherwise, visuals in `/docs/writing/*/visuals/` are **
 **Context-Specific Evaluation Criteria:**
 
 **EMBEDDED Infographics (Textbook, Articles, Curriculum):**
+
 ```markdown
 ✅ Expected elements:
+
 - Data visualization (primary focus)
 - Labels and values (what is shown)
 - Legend if needed (understanding the visual)
@@ -161,20 +181,24 @@ Unless clearly indicated otherwise, visuals in `/docs/writing/*/visuals/` are **
 - Clean, focused design
 
 ❌ NOT expected (would be redundant):
+
 - Title on the infographic itself (title is in figure caption or surrounding text)
 - Context statements ("What this shows:", "Key takeaway:")
 - Explanatory paragraphs (interpretation is in narrative)
 - Self-contained design (relies on surrounding text)
 
 ⚠️ CRITICAL: DO NOT penalize embedded infographics for:
+
 - "Missing title" (CORRECT to omit - title is in text/caption)
 - "Needs more context" (CORRECT - context in narrative)
 - "Too minimal" (CORRECT - should focus on data only)
 ```
 
 **STANDALONE Infographics (Social, Presentations, Marketing):**
+
 ```markdown
 ✅ Expected elements:
+
 - Clear title (part of visual design)
 - Subtitle or context statement
 - Complete labels and legends
@@ -182,12 +206,14 @@ Unless clearly indicated otherwise, visuals in `/docs/writing/*/visuals/` are **
 - Self-contained design (understandable without external text)
 
 ❌ Penalize if missing:
+
 - Title or clear main message
 - Context (what is this about?)
 - Self-contained explanation
 ```
 
 **Step 3: Locate source material**
+
 ```
 # Check for VIS-*.source.md in same directory
 # If not found, ask:
@@ -197,6 +223,7 @@ Unless clearly indicated otherwise, visuals in `/docs/writing/*/visuals/` are **
 ```
 
 **Step 4: Load best practices**
+
 ```
 # Automatically load:
 - docs/lemmy/style-guide/eventai-visual-identity.md
@@ -220,6 +247,7 @@ gemini-generate --validate-prompt $prompt_file --density {tier}
 ```
 
 **Why this matters:**
+
 - If the source prompt has text pattern violations (e.g., drilldown patterns in Concise tier), the infographic will inherit those issues
 - Text pattern problems in the prompt → visual clutter on the infographic
 - Validates prompt BEFORE judging infographic quality
@@ -233,14 +261,17 @@ gemini-generate --validate-prompt $prompt_file --density {tier}
 **Declared tier:** Concise
 
 **CLI Validation:**
+
 - Structural metrics: ✅ PASS (16 concepts, 2 depth)
 - Text patterns: ❌ FAIL (12 drilldown violations)
 
 **Text Pattern Issues:**
+
 - ❌ Drilldown pattern: "Mandatory facial recognition - no alternatives" (should be label only)
 - ❌ Too many words: "Bundled consent - accept all or entry denied" (8 words, max 5 for Concise)
 
 **Impact on Infographic:**
+
 - Expect explanatory text on infographic (AI generated drilldown content)
 - Likely reduced white space (text blocks added)
 - May inflate tier (Concise prompt → Standard infographic)
@@ -249,6 +280,7 @@ gemini-generate --validate-prompt $prompt_file --density {tier}
 ```
 
 **If prompt validation fails:**
+
 1. Document issues in evaluation report
 2. Note that infographic inherited prompt problems
 3. Recommend prompt revision + regeneration
@@ -264,6 +296,7 @@ Evaluate against Visual Identity Guide standards:
 
 ```markdown
 ## Color Palette Assessment
+
 - [ ] Deep Festival Purple (#6B46C1) used for primary elements
 - [ ] Electric Coral (#FF6B6B) used for key statistics/emphasis
 - [ ] Sky Blue (#4299E1) used for data visualization
@@ -271,12 +304,13 @@ Evaluate against Visual Identity Guide standards:
 - [ ] Pure White (#FFFFFF) background
 - [ ] No off-brand colors introduced
 
-Score: _/10
+Score: \_/10
 Issues: [List any deviations]
 ```
 
 ```markdown
 ## Typography Assessment
+
 - [ ] Clean modern sans-serif (Inter or similar) for headings
 - [ ] Readable body font (Source Sans Pro or similar)
 - [ ] Maximum 2 font families used
@@ -285,7 +319,7 @@ Issues: [List any deviations]
 - [ ] Body text 14-16pt minimum
 - [ ] Text legible at intended size (print or screen)
 
-Score: _/10
+Score: \_/10
 Issues: [List any problems]
 ```
 
@@ -295,6 +329,7 @@ Issues: [List any problems]
 **Context-aware evaluation:**
 
 **If EMBEDDED (textbook/article context):**
+
 - [ ] Minimum 30% white space
 - [ ] Clear visual hierarchy (data → supporting labels → source)
 - [ ] ❌ Title on infographic (should NOT be present - redundant with caption)
@@ -305,6 +340,7 @@ Issues: [List any problems]
 - [ ] Minimal explanatory text (labels only, not paragraphs)
 
 **If STANDALONE (social/presentation context):**
+
 - [ ] Minimum 30% white space
 - [ ] Clear visual hierarchy (title → data → supporting → source)
 - [ ] ✅ Title on infographic (clear, prominent)
@@ -315,19 +351,20 @@ Issues: [List any problems]
 - [ ] Breathing room between sections (24-48px)
 - [ ] Self-contained design (understandable without external text)
 
-Score: _/10
+Score: \_/10
 Issues: [List any concerns - NOTE context when flagging title presence/absence]
 ```
 
 ```markdown
 ## Festival Context Integration
+
 - [ ] Festival-relevant visual elements (stages, crowds, wristbands)
 - [ ] NOT generic business imagery (suits, offices, handshakes)
 - [ ] NOT clichéd AI imagery (robot overlords, circuit brains)
 - [ ] Human festival-goers represented (if applicable)
 - [ ] Cultural diversity shown (if people depicted)
 
-Score: _/10
+Score: \_/10
 Issues: [List any missing context]
 ```
 
@@ -337,6 +374,7 @@ Evaluate against Tufte principles and professional standards:
 
 ```markdown
 ## Data-Ink Ratio (Tufte)
+
 - [ ] Minimal cruft (no unnecessary decoration)
 - [ ] No decorative borders
 - [ ] No excessive gradients or shadows
@@ -344,43 +382,46 @@ Evaluate against Tufte principles and professional standards:
 - [ ] Grid lines only if serving data readability
 - [ ] Every element serves information or clarity
 
-Score: _/10
+Score: \_/10
 Cruft identified: [List unnecessary elements]
 ```
 
 ```markdown
 ## Graphical Excellence (Tufte)
+
 - [ ] Information-rich presentation
 - [ ] Worth reading closely (rewards attention)
 - [ ] Reveals data at multiple levels (overview → detail)
 - [ ] Encourages eye to compare data
 - [ ] Makes large dataset coherent (if applicable)
 
-Score: _/10
+Score: \_/10
 Issues: [List any problems]
 ```
 
 ```markdown
 ## Graphical Integrity (Tufte)
+
 - [ ] Proportions in graphic match proportions in data
 - [ ] No truncated axes (unless justified and labeled)
 - [ ] Clear labeling (axes, scales, units)
 - [ ] No misleading visualizations
 - [ ] Context provided (baselines, comparisons)
 
-Score: _/10
+Score: \_/10
 Issues: [List any integrity concerns]
 ```
 
 ```markdown
 ## Professional + Whimsy Balance
+
 - [ ] Professional foundation (clean structure, evidence-based)
 - [ ] Whimsical accents (personality touches, unexpected colors)
 - [ ] NOT too casual (childish illustrations, cartoon characters)
 - [ ] NOT too sterile (all gray, rigid grids only)
 - [ ] Appropriate for business/academic audience
 
-Score: _/10
+Score: \_/10
 Balance assessment: [Too professional / Just right / Too whimsical]
 ```
 
@@ -388,24 +429,26 @@ Balance assessment: [Too professional / Just right / Too whimsical]
 
 ```markdown
 ## Accessibility Compliance
+
 - [ ] Text-to-background contrast meets WCAG AA (4.5:1 minimum)
 - [ ] Information not conveyed by color alone
 - [ ] Icon + text + color for indicators (not color-only)
 - [ ] Minimum 12pt text (10pt for micro-labels only)
 - [ ] Readable for color-blind viewers (test with common CVD types)
 
-Score: _/10
+Score: \_/10
 Accessibility issues: [List any barriers]
 ```
 
 ```markdown
 ## Print Readiness (if applicable)
+
 - [ ] Resolution 300+ DPI for print (or 150+ for screen-only)
 - [ ] Text remains crisp when zoomed
 - [ ] Colors work in both RGB and CMYK (no extreme shifts)
 - [ ] Safe zones respected (12-16px from edges minimum)
 
-Score: _/10 (or N/A if screen-only)
+Score: \_/10 (or N/A if screen-only)
 Issues: [List any print concerns]
 ```
 
@@ -416,13 +459,13 @@ Issues: [List any print concerns]
 ```markdown
 ## Statistics Inventory (from infographic)
 
-| Statistic | Value | Location in Image | Context |
-|-----------|-------|------------------|---------|
-| AI Adoption 2025 | 47% | Timeline start | Major festivals |
-| AI Adoption 2028 | 67.5% | Phase 1 end | Major festivals |
-| AI Adoption 2035 | 95% | Timeline end (hero stat) | Major festivals |
-| Small festivals 2025 | 45% | Timeline start | Small venues |
-| Market value 2023 | $1.8B | Callout box | AI event management sector |
+| Statistic            | Value | Location in Image        | Context                    |
+| -------------------- | ----- | ------------------------ | -------------------------- |
+| AI Adoption 2025     | 47%   | Timeline start           | Major festivals            |
+| AI Adoption 2028     | 67.5% | Phase 1 end              | Major festivals            |
+| AI Adoption 2035     | 95%   | Timeline end (hero stat) | Major festivals            |
+| Small festivals 2025 | 45%   | Timeline start           | Small venues               |
+| Market value 2023    | $1.8B | Callout box              | AI event management sector |
 
 Example extraction table - populate with actual values from infographic
 ```
@@ -432,13 +475,13 @@ Example extraction table - populate with actual values from infographic
 ```markdown
 ## Data Accuracy Verification
 
-| Claim (Infographic) | Source Material | Match? | Issue |
-|---------------------|----------------|--------|-------|
-| 47% adoption 2025 | Source: 47% ✅ | ✅ | - |
-| 67.5% adoption 2028 | Source: 60-70% range ✅ | ✅ | Midpoint of range (acceptable) |
-| 95% adoption 2035 | Source: 95%+ ✅ | ✅ | - |
-| $1.8B market value | Source: $1.8 billion ✅ | ✅ | - |
-| "EU AI Act 2025" | Source: February 2, 2025 ✅ | ✅ | Date detail omitted (acceptable for infographic) |
+| Claim (Infographic) | Source Material             | Match? | Issue                                            |
+| ------------------- | --------------------------- | ------ | ------------------------------------------------ |
+| 47% adoption 2025   | Source: 47% ✅              | ✅     | -                                                |
+| 67.5% adoption 2028 | Source: 60-70% range ✅     | ✅     | Midpoint of range (acceptable)                   |
+| 95% adoption 2035   | Source: 95%+ ✅             | ✅     | -                                                |
+| $1.8B market value  | Source: $1.8 billion ✅     | ✅     | -                                                |
+| "EU AI Act 2025"    | Source: February 2, 2025 ✅ | ✅     | Date detail omitted (acceptable for infographic) |
 
 Overall accuracy: ✅ VERIFIED / ⚠️ MINOR DISCREPANCIES / ❌ ERRORS FOUND
 ```
@@ -449,6 +492,7 @@ Overall accuracy: ✅ VERIFIED / ⚠️ MINOR DISCREPANCIES / ❌ ERRORS FOUND
 ## Unsupported Claims Check
 
 Claims in infographic NOT found in source material:
+
 - [List any statistics, dates, or facts not in source]
 - [Flag for verification or removal]
 
@@ -462,16 +506,16 @@ If none: ✅ All claims supported by source material
 ```markdown
 ## Variant Comparison Matrix
 
-| Criterion | Variant #1 | Variant #2 | Variant #3 | Winner |
-|-----------|-----------|-----------|-----------|--------|
-| Style adherence | 7/10 | 8/10 | 9/10 | #3 ✅ |
-| Data accuracy | 10/10 | 10/10 | 10/10 | Tie ✅ |
-| White space | 6/10 | 7/10 | 8/10 | #3 ✅ |
-| Festival context | 7/10 | 8/10 | 9/10 | #3 ✅ |
-| Typography | 6/10 | 8/10 | 9/10 | #3 ✅ |
-| Minimal cruft | 6/10 | 8/10 | 9/10 | #3 ✅ |
-| Print readiness | 8/10 | 8/10 | 9/10 | #3 ✅ |
-| **TOTAL** | **50/70** | **57/70** | **63/70** | **#3** ✅ |
+| Criterion        | Variant #1 | Variant #2 | Variant #3 | Winner    |
+| ---------------- | ---------- | ---------- | ---------- | --------- |
+| Style adherence  | 7/10       | 8/10       | 9/10       | #3 ✅     |
+| Data accuracy    | 10/10      | 10/10      | 10/10      | Tie ✅    |
+| White space      | 6/10       | 7/10       | 8/10       | #3 ✅     |
+| Festival context | 7/10       | 8/10       | 9/10       | #3 ✅     |
+| Typography       | 6/10       | 8/10       | 9/10       | #3 ✅     |
+| Minimal cruft    | 6/10       | 8/10       | 9/10       | #3 ✅     |
+| Print readiness  | 8/10       | 8/10       | 9/10       | #3 ✅     |
+| **TOTAL**        | **50/70**  | **57/70**  | **63/70**  | **#3** ✅ |
 
 Recommendation: Use Variant #3
 Rationale: [Brief explanation of why this variant is strongest]
@@ -488,6 +532,7 @@ Rationale: [Brief explanation of why this variant is strongest]
 
 **⚠️ CONTEXT CHECK PERFORMED ⚠️**
 **Presentation Context:** [STANDALONE | EMBEDDED]
+
 - EMBEDDED: Infographic is part of textbook/article, surrounding text provides title and context
 - STANDALONE: Infographic stands alone (social media, presentation), must be self-contained
 
@@ -505,20 +550,21 @@ Rationale: [Brief explanation of why this variant is strongest]
 **Overall Score:** [Score]/100
 
 **Recommendation:**
+
 - ✅ **Ready for publication** - Meets all standards
 - ⚠️ **Minor revisions recommended** - Good overall, improvements suggested
 - ❌ **Major revisions required** - Significant issues must be addressed
 
 ## Score Breakdown
 
-| Category | Score | Status |
-|----------|-------|--------|
-| EventAI Style Compliance | 85/100 | ✅ Strong |
-| Best Practices Adherence | 78/100 | ⚠️ Good |
-| Data Accuracy | 100/100 | ✅ Perfect |
-| Accessibility | 72/100 | ⚠️ Needs work |
-| Festival Context | 90/100 | ✅ Excellent |
-| **TOTAL** | **425/500** | **85% - Strong** |
+| Category                 | Score       | Status           |
+| ------------------------ | ----------- | ---------------- |
+| EventAI Style Compliance | 85/100      | ✅ Strong        |
+| Best Practices Adherence | 78/100      | ⚠️ Good          |
+| Data Accuracy            | 100/100     | ✅ Perfect       |
+| Accessibility            | 72/100      | ⚠️ Needs work    |
+| Festival Context         | 90/100      | ✅ Excellent     |
+| **TOTAL**                | **425/500** | **85% - Strong** |
 ```
 
 ### Detailed Findings
@@ -529,16 +575,19 @@ Rationale: [Brief explanation of why this variant is strongest]
 ## Strengths ✅
 
 ### Visual Design
+
 - ✅ **Excellent color palette adherence**: Deep purple, electric coral, and sky blue perfectly match EventAI brand
 - ✅ **Strong festival context**: Background crowd silhouette immediately signals festival industry (not generic business)
 - ✅ **Clean typography**: Clear hierarchy, readable at intended size
 
 ### Information Design
+
 - ✅ **High data-ink ratio**: Minimal decoration, every element serves purpose
 - ✅ **Effective white space**: 30%+ composition, clean breathing room
 - ✅ **Clear visual hierarchy**: Title → phases → data points → supporting text
 
 ### Data Accuracy
+
 - ✅ **100% accuracy**: All statistics verified against source material
 - ✅ **Proper emphasis**: 95% endpoint correctly highlighted as key statistic
 - ✅ **Source citation**: Included at bottom (credibility)
@@ -554,12 +603,14 @@ Rationale: [Brief explanation of why this variant is strongest]
 ### Minor Issues (Recommended Improvements)
 
 **Typography Readability**
+
 - Issue: Milestone text appears ~12-14pt, may be difficult to read in print
 - Impact: Medium - Reduces accessibility for print use
 - Recommendation: Increase to 16pt minimum for print readability
 - Priority: 🟡 Medium
 
 **White Space Distribution**
+
 - Issue: Text callout boxes have minimal internal padding
 - Impact: Low - Slightly reduces readability
 - Recommendation: Add 8-12px padding inside callout boxes
@@ -578,6 +629,7 @@ Rationale: [Brief explanation of why this variant is strongest]
 ## EventAI Style Guide Compliance
 
 ### Color Palette: 9/10 ✅
+
 - ✅ Deep purple (#6B46C1) used for primary elements
 - ✅ Electric coral (#FF6B6B) used for 95% emphasis
 - ✅ Sky blue (#4299E1) used for data lines
@@ -585,30 +637,35 @@ Rationale: [Brief explanation of why this variant is strongest]
 - Minor: Gold/orange used for phase dividers (acceptable - warm sunlight #F6AD55)
 
 ### Typography: 8/10 ✅
+
 - ✅ Clean sans-serif (appears to be Inter or similar)
 - ✅ Maximum 2 font families
 - ✅ Clear hierarchy (title bold, body regular)
 - ⚠️ Minor: Some callout text could be larger (see weaknesses)
 
 ### Layout: 9/10 ✅
+
 - ✅ Generous white space (estimated 35-40% of composition)
 - ✅ Clear visual hierarchy
 - ✅ Left-aligned text
 - ✅ Proper margins (48px+ estimated)
 
 ### Festival Context: 10/10 ✅✅
+
 - ✅✅ Exceptional crowd silhouette (strong festival atmosphere)
 - ✅ Stage icons at data points
 - ✅ RFID wristband symbols (if present - verify in image)
 - ✅ No generic business imagery
 
 ### Professional + Whimsy: 9/10 ✅
+
 - ✅ Professional foundation (structured timeline, evidence-based data)
 - ✅ Whimsical accents (crowd silhouette, colorful phase dividers)
 - ✅ Appropriate for academic/business audience
 - Balance: Just right (credible yet memorable)
 
 ### Minimal Cruft: 9/10 ✅
+
 - ✅ No decorative borders
 - ✅ No excessive gradients
 - ✅ No ornamental shapes
@@ -624,36 +681,42 @@ Rationale: [Brief explanation of why this variant is strongest]
 ## Tufte Principles & Professional Standards
 
 ### Data-Ink Ratio: 9/10 ✅
+
 - ✅ High ratio of data-serving ink to total ink
 - ✅ Minimal decoration
 - ✅ No cruft identified
 - Minor: Could simplify further (if any redundant elements)
 
 ### Graphical Excellence: 8/10 ✅
+
 - ✅ Information-rich presentation
 - ✅ Rewards close attention (overview → detail)
 - ✅ Encourages comparison (major vs small festivals)
 - ⚠️ Could reveal more layers (e.g., milestone details)
 
 ### Graphical Integrity: 10/10 ✅
+
 - ✅ Proportions in graphic match data proportions
 - ✅ No truncated axes
 - ✅ Clear labeling (years, percentages, phases)
 - ✅ No misleading visualizations
 
 ### White Space: 9/10 ✅
+
 - ✅ Estimated 35-40% white space (exceeds 30% minimum)
 - ✅ Strategic use to group related elements
 - ✅ Breathing room around key statistics
 - Minor: Could add more padding in text boxes
 
 ### Accessibility: 7/10 ⚠️
+
 - ✅ High contrast text (appears to meet WCAG AA)
 - ✅ Not color-dependent (icons + text + color)
 - ⚠️ Some text may be below 12pt minimum (verify)
 - ⚠️ Color-blind simulation not yet performed
 
 ### Print Readiness: 8/10 ✅ (if print intended)
+
 - ✅ Appears to be high resolution (1080p webp)
 - ✅ Text appears crisp
 - ⚠️ Verify 300+ DPI for print (1080p may be screen-optimized)
@@ -669,17 +732,17 @@ Rationale: [Brief explanation of why this variant is strongest]
 
 ### Statistics Verified: 100% ✅
 
-| Infographic Claim | Source Material | Status |
-|------------------|----------------|--------|
-| 47% baseline (2025) | Source: 47% | ✅ Exact match |
-| 67.5% major (2028) | Source: 60-70% range | ✅ Midpoint (acceptable) |
-| 30% small (2028) | Source: 25-35% range | ✅ Midpoint (acceptable) |
-| 87.5% major (2032) | Source: 85-90% range | ✅ Midpoint (acceptable) |
-| 55% small (2032) | Source: 50-60% range | ✅ Midpoint (acceptable) |
-| 95% major (2035) | Source: 95%+ | ✅ Exact match |
-| 72.5% small (2035) | Source: 70-75% range | ✅ Midpoint (acceptable) |
-| EU AI Act 2025 | Source: Feb 2, 2025 | ✅ Year correct (date detail omitted) |
-| DICE 40% sales | Source: 40-41% | ✅ Rounded (acceptable for infographic) |
+| Infographic Claim   | Source Material      | Status                                  |
+| ------------------- | -------------------- | --------------------------------------- |
+| 47% baseline (2025) | Source: 47%          | ✅ Exact match                          |
+| 67.5% major (2028)  | Source: 60-70% range | ✅ Midpoint (acceptable)                |
+| 30% small (2028)    | Source: 25-35% range | ✅ Midpoint (acceptable)                |
+| 87.5% major (2032)  | Source: 85-90% range | ✅ Midpoint (acceptable)                |
+| 55% small (2032)    | Source: 50-60% range | ✅ Midpoint (acceptable)                |
+| 95% major (2035)    | Source: 95%+         | ✅ Exact match                          |
+| 72.5% small (2035)  | Source: 70-75% range | ✅ Midpoint (acceptable)                |
+| EU AI Act 2025      | Source: Feb 2, 2025  | ✅ Year correct (date detail omitted)   |
+| DICE 40% sales      | Source: 40-41%       | ✅ Rounded (acceptable for infographic) |
 
 ### Unsupported Claims: None identified ✅
 
@@ -766,12 +829,14 @@ All data points traced to source material. No hallucinations detected.
 5. **100% data accuracy**: All statistics verified
 
 ### Variant #1: 72/100
+
 - ⚠️ Color palette deviation (orange instead of coral)
 - ⚠️ Limited white space (text-heavy)
 - ⚠️ Background beige instead of white
 - ✅ Data accuracy perfect
 
 ### Variant #2: 79/100
+
 - ✅ Good festival context (crowd silhouette)
 - ✅ Color palette closer to standard
 - ⚠️ Dark text boxes too heavy
@@ -811,6 +876,7 @@ STANDALONE context indicators:
 ```
 
 **Evaluation adjustment example:**
+
 ```bash
 # EMBEDDED context (most EventAI curriculum visuals)
 /ig-evaluate docs/writing/2-education/visuals/academic-integration/*.webp
@@ -836,6 +902,7 @@ todd-image-convert docs/writing/*/visuals/*/*.png --resolution 1080p --output-fo
 ```
 
 **Why webp, not PNG?**
+
 - Consistent resolution (1080p standardized)
 - Smaller file sizes for web use
 - Better compression without quality loss
@@ -910,6 +977,7 @@ todd-image-convert docs/writing/*/visuals/*/*.png --resolution 1080p --output-fo
 Use this checklist to ensure comprehensive evaluation:
 
 ### Pre-Evaluation
+
 - [ ] Infographic file(s) identified and accessible
 - [ ] Source material located (or confirmed not needed)
 - [ ] EventAI style guide loaded
@@ -917,6 +985,7 @@ Use this checklist to ensure comprehensive evaluation:
 - [ ] Custom criteria noted (if any)
 
 ### EventAI Style Evaluation
+
 - [ ] Color palette assessed (purple, coral, blue, white)
 - [ ] Typography evaluated (fonts, sizes, hierarchy)
 - [ ] Layout checked (white space, margins, alignment)
@@ -925,6 +994,7 @@ Use this checklist to ensure comprehensive evaluation:
 - [ ] Minimal cruft principle applied
 
 ### Best Practices Evaluation
+
 - [ ] Data-ink ratio calculated
 - [ ] Graphical excellence assessed
 - [ ] Graphical integrity verified
@@ -933,6 +1003,7 @@ Use this checklist to ensure comprehensive evaluation:
 - [ ] Print readiness checked (if applicable)
 
 ### Data Verification
+
 - [ ] All statistics extracted from infographic
 - [ ] Cross-referenced against source material
 - [ ] Hallucinations/unsupported claims checked
@@ -940,12 +1011,14 @@ Use this checklist to ensure comprehensive evaluation:
 - [ ] Source citations confirmed
 
 ### Comparative Analysis (if applicable)
+
 - [ ] Each variant scored individually
 - [ ] Comparison matrix created
 - [ ] Winner identified with rationale
 - [ ] Strengths/weaknesses of each variant documented
 
 ### Report Generation
+
 - [ ] Executive summary written
 - [ ] Detailed findings documented
 - [ ] Scorecards completed
@@ -961,6 +1034,7 @@ Use this checklist to ensure comprehensive evaluation:
 ### Case 1: Timeline Infographics
 
 **Additional checks:**
+
 - [ ] Timeline flows left-to-right (standard reading direction)
 - [ ] Time intervals clearly marked
 - [ ] Phase divisions visible
@@ -970,6 +1044,7 @@ Use this checklist to ensure comprehensive evaluation:
 ### Case 2: Comparison Infographics (Before/After)
 
 **Additional checks:**
+
 - [ ] Clear visual divider between before/after
 - [ ] Before side muted (grayscale or desaturated)
 - [ ] After side full color (EventAI palette)
@@ -979,6 +1054,7 @@ Use this checklist to ensure comprehensive evaluation:
 ### Case 3: Process/Flow Diagrams
 
 **Additional checks:**
+
 - [ ] Flow direction clear (arrows, numbering)
 - [ ] Decision points visible (if applicable)
 - [ ] Steps sequentially numbered
@@ -988,6 +1064,7 @@ Use this checklist to ensure comprehensive evaluation:
 ### Case 4: Statistical Charts/Graphs
 
 **Additional checks:**
+
 - [ ] Axes labeled clearly (units, scale)
 - [ ] Data points directly labeled (not legend-only)
 - [ ] No truncated axes (unless justified and labeled)
@@ -1003,6 +1080,7 @@ Use this checklist to ensure comprehensive evaluation:
 **Problem:** Penalizing embedded infographic for missing title, or standalone for having one
 
 **Detection:**
+
 ```
 File: docs/writing/2-education/visuals/academic-integration/academic-integration-3.webp
 Location: /writing/*/visuals/ → EMBEDDED context
@@ -1011,22 +1089,24 @@ Evaluator flags: "Missing title" ❌ WRONG!
 ```
 
 **Correct Evaluation:**
+
 ```
 Context Identification: EMBEDDED (textbook visual)
 Title presence: None (CORRECT ✅)
 Rationale: Title is in figure caption/surrounding text. Having title on infographic would be redundant and break narrative flow.
 
 Layout Score: 9/10 ✅
-Strengths: 
+Strengths:
 - Correctly omits title (follows embedded context best practices)
 - Clean, data-focused design
 - Integrates seamlessly with narrative text
 
-⚠️ CRITICAL: This is CORRECT design for embedded context. 
+⚠️ CRITICAL: This is CORRECT design for embedded context.
    DO NOT penalize for missing title - it SHOULD be absent.
 ```
 
 **Wrong Evaluation:**
+
 ```
 ❌ "Missing title - needs clear heading" ← INCORRECT for embedded context
 ❌ "Needs context statement" ← INCORRECT - context is in narrative
@@ -1034,8 +1114,9 @@ Strengths:
 ```
 
 **Prevention:**
+
 1. ALWAYS identify context (standalone vs. embedded) FIRST
-2. Check file location (/writing/*/visuals/ = embedded)
+2. Check file location (/writing/\*/visuals/ = embedded)
 3. Apply context-appropriate evaluation criteria
 4. Document context identification in report
 
@@ -1044,12 +1125,14 @@ Strengths:
 **Problem:** Infographic uses colors outside EventAI palette
 
 **Detection:**
+
 ```
 Expected: Deep purple (#6B46C1), electric coral (#FF6B6B), sky blue (#4299E1)
 Found: Orange (#FF8C42), teal (#00CED1), generic gray
 ```
 
 **Evaluation:**
+
 ```
 Color Palette Score: 5/10 ⚠️
 Issue: Non-brand colors used (orange instead of coral, teal instead of blue)
@@ -1063,12 +1146,14 @@ Priority: 🟡 High (brand consistency important)
 **Problem:** Infographic appears cramped, visually cluttered
 
 **Detection:**
+
 ```
 Estimated white space: ~15-20% of composition
 Minimum required: 30%
 ```
 
 **Evaluation:**
+
 ```
 White Space Score: 4/10 ⚠️
 Issue: Insufficient breathing room, elements too close together
@@ -1082,12 +1167,14 @@ Priority: 🟡 High (significantly impacts quality perception)
 **Problem:** Statistics in infographic don't match source material
 
 **Detection:**
+
 ```
 Infographic: "50% adoption by 2028"
 Source material: "60-70% adoption by 2028"
 ```
 
 **Evaluation:**
+
 ```
 Data Accuracy Score: 6/10 ❌
 Issue: Statistic outside source material range
@@ -1101,6 +1188,7 @@ Priority: 🔴 Critical (must fix before publication)
 **Problem:** No clear visual hierarchy, all text similar size
 
 **Detection:**
+
 ```
 Title: 28pt
 Section headers: 24pt
@@ -1109,6 +1197,7 @@ Statistics: 26pt
 ```
 
 **Evaluation:**
+
 ```
 Typography Score: 5/10 ⚠️
 Issue: Insufficient size differentiation, no clear hierarchy
@@ -1124,17 +1213,20 @@ Priority: 🟡 High (significantly impacts effectiveness)
 ### Evaluation is COMPLETE when:
 
 ✅ **Visual analysis performed:**
+
 - EventAI style compliance scored (color, typography, layout, context)
 - Best practices adherence verified (Tufte principles, white space, accessibility)
 - Print/screen readiness assessed
 
 ✅ **Data verification performed:**
+
 - All statistics extracted and inventoried
 - Cross-referenced against source material
 - Hallucinations/unsupported claims checked
 - Numerical accuracy confirmed
 
 ✅ **Report generated AND WRITTEN TO FILE:**
+
 - Executive summary with overall score and recommendation
 - Detailed findings (strengths and weaknesses)
 - Scorecards for each evaluation category
@@ -1142,11 +1234,13 @@ Priority: 🟡 High (significantly impacts effectiveness)
 - **Report file created:** `[name].eval.md` in infographic directory
 
 ✅ **Comparative analysis (if multiple variants):**
+
 - Each variant scored individually
 - Comparison matrix created
 - Winner identified with clear rationale
 
 ✅ **GENERATE-INSTRUCTIONS updated:**
+
 - Prompt improvements added based on evaluation findings
 - Common issues flagged with ⚠️ or ❌ in AVOID section
 - Critical requirements emphasized at top of prompt
@@ -1169,12 +1263,14 @@ Priority: 🟡 High (significantly impacts effectiveness)
 ## Anti-Patterns (What NOT to Do)
 
 ❌ **Don't skip context identification:**
+
 ```
 Bad: Evaluate all infographics as standalone, penalize embedded ones for "missing title"
 Good: Identify context FIRST (standalone vs. embedded), apply appropriate criteria
 ```
 
 **CRITICAL Example:**
+
 ```
 ❌ WRONG:
 File: docs/writing/2-education/visuals/literacy-comparison/literacy-comparison-1.webp
@@ -1189,30 +1285,35 @@ Evaluation: 9/10 - Proper embedded infographic design
 ```
 
 ❌ **Don't skip source material verification:**
+
 ```
 Bad: "Looks good, numbers seem reasonable"
 Good: Cross-reference every statistic against source document
 ```
 
 ❌ **Don't accept "close enough" on brand colors:**
+
 ```
 Bad: "Orange is close to coral, good enough"
 Good: Verify exact hex codes, flag deviations
 ```
 
 ❌ **Don't overlook accessibility:**
+
 ```
 Bad: "Looks fine to me" (without checking contrast ratios or color-blind view)
 Good: Test WCAG compliance, simulate color-blindness
 ```
 
 ❌ **Don't evaluate in isolation:**
+
 ```
 Bad: Review infographic without context of intended use (print vs screen, audience, etc.)
 Good: Consider use case, audience needs, distribution channel
 ```
 
 ❌ **Don't be vague in recommendations:**
+
 ```
 Bad: "Could be better"
 Good: "Increase milestone text from 12pt to 16pt for print readability"
@@ -1223,6 +1324,7 @@ Good: "Increase milestone text from 12pt to 16pt for print readability"
 ## Output Format Preferences
 
 ### Concise Summary (default)
+
 ```markdown
 # Evaluation: [Infographic Name]
 
@@ -1230,11 +1332,13 @@ Good: "Increase milestone text from 12pt to 16pt for print readability"
 **Status:** Approved with minor revisions
 
 **Strengths:**
+
 - Excellent EventAI style adherence (90%)
 - Perfect data accuracy (100%)
 - Strong festival context (10/10)
 
 **Improvements:**
+
 1. Increase milestone text to 16pt (print readability)
 2. Verify 300+ DPI for print use
 
@@ -1242,11 +1346,13 @@ Good: "Increase milestone text from 12pt to 16pt for print readability"
 ```
 
 ### Detailed Report (use --verbose flag)
+
 ```markdown
 [Full comprehensive report with all scorecards, detailed findings, comparative analysis]
 ```
 
 ### JSON Output (use --json flag)
+
 ```json
 {
   "overall_score": 85,
@@ -1259,10 +1365,7 @@ Good: "Increase milestone text from 12pt to 16pt for print readability"
     "festival_context": 90
   },
   "critical_issues": [],
-  "high_priority": [
-    "Increase milestone text to 16pt",
-    "Verify 300+ DPI for print"
-  ],
+  "high_priority": ["Increase milestone text to 16pt", "Verify 300+ DPI for print"],
   "recommendation": "Use Variant #3"
 }
 ```

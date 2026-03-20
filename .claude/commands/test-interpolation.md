@@ -2,6 +2,7 @@
 description: Test skill demonstrating argument interpolation
 argument-hint: <task description>
 ---
+
 # Test Interpolation Skill
 
 You are an AI assistant helping with: **{ARGUMENT}**

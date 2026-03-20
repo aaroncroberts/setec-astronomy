@@ -71,6 +71,7 @@ $ git commit -m "..."
 ## Usage
 
 Say `/commit` and I will:
+
 1. Stage all changes
 2. Generate an impact-focused commit message
 3. Execute the commit

@@ -7,6 +7,7 @@ Load comprehensive best practices for creating effective, information-dense, pri
 ## Core Approach
 
 This command doesn't perform actions—it loads authoritative, research-based visual design guidance into your working context. Use it when creating, evaluating, or refining infographics to ensure:
+
 1. **Graphical Excellence:** Tufte's principles for information-dense yet clear visualization
 2. **Professional + Whimsy Balance:** EventAI's distinctive credible-yet-memorable style
 3. **Print Readiness:** 300-600 DPI, proper color profiles, technical specifications
@@ -20,6 +21,7 @@ This command doesn't perform actions—it loads authoritative, research-based vi
 ### Primary Use Cases
 
 **✅ INVOKE `/infographics-bestpractices` when:**
+
 - Creating new infographic prompts for NotebookLM or other generators
 - Evaluating generated infographics for quality and compliance
 - Refining infographic designs before publication
@@ -29,6 +31,7 @@ This command doesn't perform actions—it loads authoritative, research-based vi
 - Training AI generators with specific design requirements
 
 **❌ DON'T invoke for:**
+
 - Quick logo design or branding work (different principles)
 - Photography or illustration (different visual domains)
 - Web UI/UX design (different interaction paradigms)
@@ -47,6 +50,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 #### The Three-Tier Framework
 
 **1. Concise Tier (Minimal Detail)**
+
 - **Purpose:** Quick glance comprehension, social media, elevator pitches
 - **Information density:** Headline stats only, minimal explanatory text
 - **Comprehension time:** 15-30 seconds
@@ -59,6 +63,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
   - Executive summary graphics
 
 **Example characteristics:**
+
 - Title + 3-5 key statistics (large, prominent)
 - Minimal labels (just enough to understand)
 - No detailed breakdowns or sub-categories
@@ -66,6 +71,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 - "At-a-glance" understanding
 
 **2. Standard Tier (Balanced Detail) ← DEFAULT**
+
 - **Purpose:** Conference presentations, blog posts, reports, general publication
 - **Information density:** Key breakdowns visible, balanced detail without overwhelming
 - **Comprehension time:** 30-60 seconds
@@ -78,6 +84,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
   - General publication (default choice)
 
 **Example characteristics:**
+
 - Title + key statistics + breakdown categories
 - Each category shows 3-4 data points or components
 - Brief labels/descriptions (not paragraphs)
@@ -86,6 +93,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 - "Quick comprehension with enough detail to be useful"
 
 **3. Detailed Tier (Comprehensive Information)**
+
 - **Purpose:** Textbooks, MBA case studies, deep educational contexts, analyst reports
 - **Information density:** Comprehensive annotations, explanatory text, maximum educational value
 - **Comprehension time:** 2-3 minutes (requires close reading)
@@ -98,6 +106,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
   - Research presentations (academic conferences)
 
 **Example characteristics:**
+
 - Title + statistics + breakdowns + explanatory annotations
 - Each component has 2-3 sentences of explanation
 - Year-by-year progressions or detailed timelines
@@ -108,11 +117,13 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 #### Default Behavior: Standard Tier
 
 **Unless explicitly requested, ALWAYS target Standard tier:**
+
 - ✅ "Generate an infographic for VIS-X.X" → Standard tier
 - ✅ "Create a cost-benefit visualization" → Standard tier
 - ✅ "Evaluate this infographic" → Assume Standard tier unless context suggests otherwise
 
 **Only use other tiers when:**
+
 - 🔷 User explicitly requests "Concise" or "minimal detail" → Concise tier
 - 📘 User explicitly requests "Detailed" or "educational/textbook version" → Detailed tier
 - 📋 Context clearly indicates tier (e.g., "for social media" → Concise, "for MBA course" → Detailed)
@@ -122,14 +133,17 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 **When evaluating infographics, first identify the intended tier:**
 
 **Concise tier evaluation:**
+
 - ✅ Success: Headline stats prominent, minimal text, 40%+ white space, instant comprehension
 - ❌ Failure: Too much detail (becomes Standard), insufficient white space, requires reading
 
 **Standard tier evaluation:**
+
 - ✅ Success: Balanced detail, key breakdowns visible, 30% white space, 30-60 second comprehension
 - ❌ Failure: Too sparse (should be Concise) OR too dense (becomes Detailed)
 
 **Detailed tier evaluation:**
+
 - ✅ Success: Comprehensive annotations, educational value, rewards close study
 - ❌ Failure: Cognitive overload (too dense even for Detailed), accessibility issues from small text
 
@@ -144,6 +158,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 #### The Two Context Types
 
 **1. Standalone Infographics**
+
 - **Use cases:** Social media posts, conference slides, reports (as separate pages), marketing materials, email newsletters
 - **Characteristics:** Self-contained, can be understood without surrounding text
 - **Required elements:**
@@ -155,6 +170,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 - **Rationale:** Viewer may encounter infographic without any supporting text
 
 **2. Embedded Infographics (In-Narrative Media)**
+
 - **Use cases:** Textbook visuals, article illustrations, blog post graphics, academic papers, curriculum materials
 - **Characteristics:** Integrated within text flow, referenced by surrounding paragraphs
 - **Required elements:**
@@ -168,6 +184,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 #### Why This Distinction Matters
 
 **Problem: Redundancy and flow disruption**
+
 ```
 [Narrative text discussing AI adoption trends...]
 
@@ -179,6 +196,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 ```
 
 **Solution: Context-appropriate design**
+
 ```
 [Narrative text discussing AI adoption trends...]
 
@@ -192,6 +210,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 #### Design Principles by Context
 
 **Standalone Infographics:**
+
 - Design as if infographic could be shared without article
 - Include title as visual element (part of composition hierarchy)
 - Add context statements ("What this shows:", "Key takeaway:")
@@ -199,6 +218,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 - Footer with source, date, creator
 
 **Embedded Infographics:**
+
 - Design as visual data layer within text
 - NO title on the infographic (would duplicate figure caption)
 - NO explanatory text beyond labels (interpretation is in narrative)
@@ -209,12 +229,14 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 #### Evaluation Criteria Adjustments
 
 **When evaluating standalone infographics:**
+
 - ✅ Expect clear title as part of design
 - ✅ Expect context statements or introductory text
 - ✅ Penalize if missing self-contained context
 - ✅ Full composition hierarchy (title → data → details → source)
 
 **When evaluating embedded infographics:**
+
 - ❌ **DO NOT penalize** for missing title (should not have one!)
 - ❌ **DO NOT penalize** for missing context statements (provided by text)
 - ✅ Expect minimal explanatory text (just labels and data)
@@ -224,6 +246,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 #### How to Identify Context
 
 **Embedded infographic indicators:**
+
 - Located within a document with surrounding text (e.g., `/docs/writing/*/drafts/*.md`)
 - Referenced as "Figure X.X" or similar in narrative
 - Part of a numbered sequence (Figure 2.1, 2.2, etc.)
@@ -231,6 +254,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 - Prompt file indicates "for textbook" or "curriculum integration"
 
 **Standalone infographic indicators:**
+
 - Designed for social media, presentations, marketing
 - Prompt includes "self-contained" or "standalone"
 - Includes "share on LinkedIn/Twitter" in use case
@@ -240,6 +264,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 #### EventAI Curriculum Specifics
 
 **For EventAI textbook/curriculum visuals:**
+
 - **Default context: Embedded** (unless explicitly noted otherwise)
 - Infographics support narrative sections
 - Figure captions provide titles and context
@@ -247,6 +272,7 @@ When you invoke `/infographics-bestpractices`, the following knowledge areas bec
 - Clean, data-focused design without redundant titling
 
 **Example evaluation adjustment:**
+
 ```
 Infographic: academic-integration-3.webp
 Location: docs/writing/2-education/visuals/academic-integration/
@@ -263,6 +289,7 @@ Context: Embedded (textbook curriculum)
 #### Default Assumptions
 
 **Unless context clearly indicates otherwise:**
+
 - EventAI curriculum visuals → **Embedded**
 - Social media posts → **Standalone**
 - Conference slides → **Standalone**
@@ -279,6 +306,7 @@ Context: Embedded (textbook curriculum)
 **Tufte is the authority on data-rich visualization. His principles are essential for information-dense yet clear infographics.**
 
 #### Graphical Excellence
+
 - Well-designed presentation of interesting data
 - Substance over style
 - Many numbers in a small space
@@ -288,6 +316,7 @@ Context: Embedded (textbook curriculum)
 - **Tufte's ideal:** Graphic that rewards attention—viewer can scan quickly, then keep learning
 
 #### Graphical Integrity
+
 - Proportions in graphic = proportions in data
 - Clear labeling (axes, scales, units)
 - Show data variation, not design variation
@@ -296,9 +325,11 @@ Context: Embedded (textbook curriculum)
 - **Avoid:** Misleading scales, truncated axes, cherry-picked ranges
 
 #### Data-Ink Ratio
+
 **Formula:** Data-Ink Ratio = (Ink used for data) / (Total ink used)
 
 **Maximize data ink, minimize everything else:**
+
 - Remove unnecessary gridlines
 - Eliminate decorative borders
 - Simplify axis labels
@@ -308,6 +339,7 @@ Context: Embedded (textbook curriculum)
 **Caution:** Don't oversimplify to confusion—context elements (axes, labels) are necessary
 
 #### Data Density
+
 - As volume increases, data measures must shrink
 - More data points → smaller dots (scatter plots)
 - Busy time-series → thinner lines
@@ -315,7 +347,9 @@ Context: Embedded (textbook curriculum)
 - **High-performance graphics:** Maximum information in minimum space while remaining clear
 
 #### Analytical Design
+
 Charts should support serious analysis:
+
 - **Comparisons:** Show relationships between variables
 - **Multivariate thinking:** Display multiple dimensions simultaneously
 - **Layered detail:** Overview + drill-down capability
@@ -324,12 +358,14 @@ Charts should support serious analysis:
 ### 2. Print-Ready Technical Specifications
 
 **Resolution requirements:**
+
 - **Print (Paper/Posters):** 300-600 DPI minimum
   - High-quality prints: 600 DPI
   - Standard prints: 300 DPI
   - Export as high-resolution PDF or TIFF
 
 **File format guidelines:**
+
 - **Print:** PDF/X-4 or TIFF with CMYK color profile
 - **Web:** PNG or WebP formats (sRGB color profile)
 - **Both:** Export separate versions optimized for each medium
@@ -337,51 +373,63 @@ Charts should support serious analysis:
 ### 3. Core Design Principles
 
 #### Typography (Two-Font Rule)
+
 - **Font 1:** Title (can be distinctive, eye-catching)
 - **Font 2:** Headings and body text (clean, simple, readable)
 
 **✅ Do:**
+
 - Keep body font simple and clean
 - Ensure readability at small sizes
 - Test legibility at print size
 
 **❌ Don't:**
+
 - Use decorative/script fonts for small text
 - Mix more than 2-3 font families
 - Use hard-to-read fonts for data/numbers
 
 #### Layout and Flow
+
 **Natural reading pattern:**
+
 - Left-to-right, top-to-bottom (English)
 - Information hierarchy matches reading flow
 - Visual path guides the eye through content
 
 **Composition hierarchy:**
+
 1. Title/Main Message (immediate attention)
 2. Key Statistics/Data (supporting evidence)
 3. Detailed Information (for deep readers)
 4. Citations/Sources (credibility footer)
 
 #### White Space (Negative Space)
+
 **Purpose:**
+
 - Draw attention to key points
 - Prevent visual clutter
 - Create breathing room
 - Establish hierarchy
 
 **Critical principle:** White space is not wasted space—it's an active design element
+
 - Use to separate distinct sections
 - Don't fill every gap with content
 - Strategic emptiness = visual power
 - "Less is more" in information design
 
 #### Focused and Purposeful Content
+
 **Start with clear message:**
+
 - What is the ONE main point?
 - What should people remember?
 - Is every element supporting that message?
 
 **Content strategy:**
+
 - Remove anything that doesn't serve core message
 - Prioritize clarity over comprehensiveness
 - One infographic = One focused topic
@@ -392,6 +440,7 @@ Charts should support serious analysis:
 **How to achieve professional credibility + whimsical approachability:**
 
 #### Whimsical Elements (Use Sparingly)
+
 - Odd shapes and unexpected compositions
 - Daring color schemes (bright accents)
 - Playful illustrations or icons
@@ -399,6 +448,7 @@ Charts should support serious analysis:
 - Soft, rounded typography for titles
 
 #### Professional Elements (Foundation)
+
 - Clean, structured layouts
 - Sophisticated color palette (not childish)
 - Readable, sans-serif body fonts
@@ -406,6 +456,7 @@ Charts should support serious analysis:
 - Proper alignment and spacing
 
 #### The Balance Formula
+
 - **Foundation:** Professional structure (80%)
 - **Accent:** Whimsical personality touches (20%)
 - **Result:** Memorable yet credible
@@ -413,21 +464,25 @@ Charts should support serious analysis:
 #### Visual Approach Patterns
 
 **Pattern 1: Soft Pastels + Crisp Lines**
+
 - Playful pastel color scheme (approachability)
 - Clean typography and uncluttered composition (professionalism)
 - Result: Expressive character + aspiration
 
 **Pattern 2: Bold Color + Minimalist Layout**
+
 - Vibrant, daring colors (whimsy)
 - Minimal elements, lots of white space (professionalism)
 - Result: Eye-catching yet sophisticated
 
 **Pattern 3: Quirky Icons + Serious Data**
+
 - Illustrated, personality-rich icons (whimsy)
 - Precise data visualization (professionalism)
 - Result: Engaging yet trustworthy
 
 #### Critical Success Factors
+
 1. **Restraint:** Don't overdo whimsical elements (becomes unprofessional)
 2. **Strategic placement:** Whimsy in accents, not foundational structure
 3. **Clarity first:** Never sacrifice readability for personality
@@ -436,6 +491,7 @@ Charts should support serious analysis:
 ### 5. Minimal Cruft Principle (EventAI-Specific)
 
 **What is "cruft"?**
+
 - Decorative borders that serve no purpose
 - Unnecessary gradients or shadows
 - Generic stock imagery
@@ -443,6 +499,7 @@ Charts should support serious analysis:
 - Visual noise
 
 **How to avoid:**
+
 1. **Question every element:** "Does this help understanding?"
 2. **Remove decoration:** If it's purely decorative, cut it
 3. **Functional beauty:** Let data and structure create the aesthetic
@@ -453,14 +510,18 @@ Charts should support serious analysis:
 ### 6. 2025 Design Trends
 
 #### Dynamic Compositions
+
 Traditional grid layouts → **Playful, dynamic compositions**
+
 - Not rigidly structured
 - Creative, flowing layouts
 - Guide the eye naturally
 - Organic, visual storytelling flows
 
 #### Accessibility-First Design
+
 **Critical trend in 2025:**
+
 - Vision impairments (color blindness, low vision)
 - Screen reader compatibility
 - Alternative text descriptions
@@ -468,7 +529,9 @@ Traditional grid layouts → **Playful, dynamic compositions**
 - Non-color-dependent information (don't rely solely on color)
 
 #### Interactive and Immersive Experiences
+
 Infographics evolving beyond static visuals:
+
 - Clickable elements
 - Embedded videos
 - Dynamic data visualizations
@@ -494,6 +557,7 @@ From scientific visualization research (applicable to all infographics):
 ### 8. EventAI-Specific Applications
 
 #### Distinctive Identity
+
 **How to make EventAI infographics recognizable:**
 
 1. **Consistent Color Palette** (defined in EventAI Visual Identity Guide):
@@ -522,6 +586,7 @@ From scientific visualization research (applicable to all infographics):
    - Repeating structural elements
 
 #### Dense Visual Integration with Text
+
 **Strategy for EventAI Curriculum:**
 
 Text Section (500-1000 words)
@@ -539,6 +604,7 @@ Text Section: Recommendations
 **Principle:** Every 500-1000 words, provide a visual break that adds information, not just decoration
 
 **Visual types to rotate:**
+
 - Process flowcharts
 - Comparison tables (visual)
 - Data charts/graphs
@@ -552,12 +618,14 @@ Text Section: Recommendations
 **After generating infographic:**
 
 ✅ **Clarity:**
+
 - [ ] Main message immediately clear
 - [ ] Text readable at intended size
 - [ ] Data accurately represented
 - [ ] No hallucinated statistics
 
 ✅ **Design Quality:**
+
 - [ ] Aligns with EventAI style (professional + whimsy)
 - [ ] Minimal cruft (no unnecessary decoration)
 - [ ] Appropriate white space (30%+ composition)
@@ -565,24 +633,28 @@ Text Section: Recommendations
 - [ ] Typography follows two-font rule
 
 ✅ **Tufte Principles:**
+
 - [ ] High data-ink ratio
 - [ ] Graphical integrity (proportions match data)
 - [ ] Graphical excellence (rewards attention)
 - [ ] Analytical design (supports comparisons)
 
 ✅ **Technical:**
+
 - [ ] Sufficient resolution for print (300-600 DPI if applicable)
 - [ ] Colors work in both print (CMYK) and digital (RGB)
 - [ ] Accessible (4.5:1 contrast, non-color-dependent info)
 - [ ] Proper file format (PDF/TIFF for print, PNG/WebP for web)
 
 ✅ **Factual:**
+
 - [ ] Data matches sources (AI can hallucinate)
 - [ ] Labels accurate
 - [ ] Statistics verifiable
 - [ ] Source citations included
 
 ✅ **EventAI Brand:**
+
 - [ ] Festival context (not generic business/tech imagery)
 - [ ] Color palette adherence (purple, coral, blue, white)
 - [ ] Professional + whimsy balance appropriate
@@ -597,6 +669,7 @@ Once `/infographics-bestpractices` loads the research into working memory, you c
 ### Immediate Application
 
 **For creating new infographic prompts:**
+
 ```
 "Generate a NotebookLM prompt for an AI adoption timeline infographic following Tufte's principles."
 
@@ -605,6 +678,7 @@ Once `/infographics-bestpractices` loads the research into working memory, you c
 ```
 
 **For evaluating generated infographics:**
+
 ```
 "Evaluate this infographic against Tufte's principles and EventAI brand standards."
 
@@ -613,6 +687,7 @@ Once `/infographics-bestpractices` loads the research into working memory, you c
 ```
 
 **For refining infographic designs:**
+
 ```
 "This infographic feels cluttered. How can I improve it?"
 
@@ -621,6 +696,7 @@ Once `/infographics-bestpractices` loads the research into working memory, you c
 ```
 
 **For integration with /ig-generate:**
+
 ```
 /infographics-bestpractices
 /ig-generate VIS-2.1
@@ -651,6 +727,7 @@ User: "Can I use color alone to show categories?"
 **When both commands are active:**
 
 ### Enhanced Prompt Generation
+
 `/infographics-bestpractices` automatically enhances `/ig-generate` prompts with:
 
 1. **Tufte Principles Embedded:**
@@ -676,9 +753,11 @@ User: "Can I use color alone to show categories?"
    - "Icon + text + color for indicators"
 
 ### Quality Evaluation Standards
+
 When `/ig-evaluate` uses loaded best practices:
 
 **Scoring criteria automatically includes:**
+
 - Tufte's graphical excellence (10 points)
 - Data-ink ratio (10 points)
 - Graphical integrity (10 points)
@@ -718,7 +797,8 @@ When `/ig-evaluate` uses loaded best practices:
 **Loaded from:** `docs/lemmy/research/infographics-best-practices.md`
 
 **Research synthesis includes:**
-- **Tufte's principles:** *The Visual Display of Quantitative Information*, graphical excellence/integrity, data-ink ratio
+
+- **Tufte's principles:** _The Visual Display of Quantitative Information_, graphical excellence/integrity, data-ink ratio
 - **Design fundamentals:** Venngage 2025 trends, Visme best practices, typography rules, layout principles
 - **Professional resources:** EBSCO visualization guides, Hull University design principles, RMCAD effective infographics
 - **Scientific visualization:** PMC principles of data visualization, Appnovation 12 principles
@@ -825,12 +905,15 @@ User: "How do I make infographics look distinctively EventAI?"
 **This command is a reference loader, not an action executor:**
 
 ❌ **Doesn't automatically generate infographics**
+
 - You must use `/ig-generate` or request specific prompt creation
 
 ❌ **Doesn't automatically edit image files**
+
 - You must request design revisions or regeneration
 
 ❌ **Doesn't score infographics unprompted**
+
 - You must invoke `/ig-evaluate` or request assessment
 
 **Instead, it:**
@@ -927,6 +1010,7 @@ todd-carl update beads-xxx --status=completed --reason="Variant #3 selected, sco
 - **`/validate`** - Verify factual accuracy of infographic data
 
 **Complementary workflow:**
+
 ```bash
 /infographics-bestpractices    # Load design guidance
 /ig-generate VIS-X.X           # Create prompt with Tufte principles
@@ -940,17 +1024,20 @@ todd-carl update beads-xxx --status=completed --reason="Variant #3 selected, sco
 ## Notes on Context and Memory
 
 **Context persistence:**
+
 - Loaded best practices remain available throughout current conversation
 - No need to re-invoke unless you start new conversation
 - Claude will reference loaded guidelines automatically in subsequent responses
 - Works seamlessly with `/ig-generate` and `/ig-evaluate`
 
 **Memory management:**
+
 - This command loads ~4,000 words of research into working memory
 - Recommended for focused infographic design sessions
 - For brief questions, you may not need full context load
 
 **When to re-invoke:**
+
 - Start of new infographic work session
 - After conversation compaction/summarization
 - Before running `/ig-generate` (ensures prompts include best practices)

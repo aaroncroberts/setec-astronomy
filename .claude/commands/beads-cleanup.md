@@ -9,6 +9,7 @@ $ARGUMENTS
 ```
 
 **Supported arguments:**
+
 - `--status=<state>` - Filter by status: `open`, `in_progress`, `closed`, `all` (default: `open`)
 - `--analyze` - Analysis only, no changes (default behavior without args)
 - `--execute` - Execute the cleanup plan
@@ -29,6 +30,7 @@ $ARGUMENTS
 ### Phase 1: Analysis
 
 1. **Inventory** - List all beads in target state(s)
+
    ```bash
    bd list --status=<state> --limit 0
    bd stats
@@ -53,6 +55,7 @@ $ARGUMENTS
 ### Phase 2: Design WBS Structure
 
 Create hierarchy:
+
 ```
 EPIC (strategic initiative)
 ├── FEATURE (deliverable capability)
@@ -62,6 +65,7 @@ EPIC (strategic initiative)
 ```
 
 Dependency types:
+
 - `parent-child` - Hierarchy (epic→feature→task)
 - `blocks` - Critical path (must complete first)
 - `validates` - Testing relationship
@@ -70,21 +74,25 @@ Dependency types:
 ### Phase 3: Execute (if --execute)
 
 1. **Close stale beads**
+
    ```bash
    bd close <id> --reason="<explanation>"
    ```
 
 2. **Create missing parents**
+
    ```bash
    bd create --title="<name>" --type=feature --priority=<N>
    ```
 
 3. **Retype misclassified**
+
    ```bash
    bd update <id> --type=<correct-type>
    ```
 
 4. **Wire dependencies**
+
    ```bash
    bd dep add <child> <parent> --type=parent-child
    bd dep add <blocked> <blocker>
@@ -106,17 +114,20 @@ Dependency types:
 **Total beads**: N
 
 ### Domain Breakdown
+
 | Domain | Open | In Progress | Blocked | Orphaned |
-|--------|------|-------------|---------|----------|
+| ------ | ---- | ----------- | ------- | -------- |
 | ...    | ...  | ...         | ...     | ...      |
 
 ### Issues Found
+
 - **Stale (N)**: [list with IDs]
 - **Orphans (N)**: [list with IDs]
 - **Mistyped (N)**: [list with IDs]
 - **Blocked chains (N)**: [explanation]
 
 ### Proposed Actions
+
 1. Close: [IDs and reasons]
 2. Create: [new parents needed]
 3. Retype: [ID: old→new]
@@ -124,6 +135,7 @@ Dependency types:
 5. Reprioritize: [ID: old→new]
 
 ### Recommended WBS
+
 [Tree structure showing proposed hierarchy]
 ```
 
