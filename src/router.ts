@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
 import type { Env } from './types';
 import { handleDiscovery, handleJwks } from './routes/discovery';
+import { handleAuthorize } from './routes/authorize';
+import { handleLoginForm, handleLoginPost } from './routes/login';
 import { adminRouter } from './routes/admin';
 
 /**
@@ -15,6 +17,11 @@ export function createApp(): Hono<{ Bindings: Env }> {
   // ── OIDC Discovery ────────────────────────────────────────────────────────
   app.get('/.well-known/openid-configuration', handleDiscovery);
   app.get('/jwks.json', handleJwks);
+
+  // ── Authorization & Login ─────────────────────────────────────────────────
+  app.get('/authorize', handleAuthorize);
+  app.get('/login', handleLoginForm);
+  app.post('/login', handleLoginPost);
 
   // ── Admin API ─────────────────────────────────────────────────────────────
   app.route('/admin', adminRouter);

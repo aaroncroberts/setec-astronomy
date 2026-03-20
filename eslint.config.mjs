@@ -21,7 +21,7 @@ export default [
       ...tsPlugin.configs['recommended'].rules,
       ...tsPlugin.configs['recommended-requiring-type-checking'].rules,
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/explicit-function-return-type': 'warn',
       'no-console': ['warn', { allow: ['error', 'warn'] }],
     },
