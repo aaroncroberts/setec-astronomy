@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "setec_astronomy",
+  "project_id": "b6799c62-13bb-4997-bf5d-abbd8cfb1d71"
+}
