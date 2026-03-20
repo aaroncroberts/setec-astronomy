@@ -65,8 +65,8 @@ export function handleDiscovery(c: Context<{ Bindings: Env }>): Response {
  */
 export async function handleJwks(c: Context<{ Bindings: Env }>): Promise<Response> {
   const privateKey = await importRsaPrivateKey(c.env.SIGNING_KEY_PRIVATE);
-  // kid is derived from the issuer to be deterministic across deployments
-  const kid = `${c.env.ISSUER.replace(/https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}-1`;
+  // Must match the KID constant used in token.ts, userinfo.ts, and tokens/issue.ts
+  const kid = 'key-1';
   const { jwk } = await deriveAndExportPublicKey(privateKey, kid);
 
   return c.json({ keys: [jwk] });
