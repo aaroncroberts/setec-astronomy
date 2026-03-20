@@ -141,3 +141,6 @@ vite.config.ts.timestamp-*
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+
+# Beads runtime credentials (sensitive, never commit)
+.beads/.beads-credential-key
