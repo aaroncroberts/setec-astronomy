@@ -79,3 +79,34 @@ export const CreateClientSchema = z.object({
 });
 
 export type CreateClient = z.infer<typeof CreateClientSchema>;
+
+// ── Admin: update user (PATCH /admin/users/:id) ───────────────────────────────
+
+export const UpdateUserSchema = z
+  .object({
+    email: z.string().email('Invalid email address').optional(),
+    password: z.string().min(8, 'Password must be at least 8 characters').optional(),
+    is_active: z.boolean().optional(),
+    profile: z
+      .object({
+        name: z.string().optional(),
+        groups: z.array(z.string()).optional(),
+      })
+      .optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'At least one field must be provided for update',
+  });
+
+export type UpdateUser = z.infer<typeof UpdateUserSchema>;
+
+// ── Admin: list users (GET /admin/users query params) ─────────────────────────
+
+export const ListUsersQuerySchema = z.object({
+  search: z.string().optional(),
+  // Query params arrive as strings; coerce to number before applying defaults.
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+
+export type ListUsersQuery = z.infer<typeof ListUsersQuerySchema>;

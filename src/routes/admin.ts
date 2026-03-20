@@ -1,10 +1,10 @@
 import { Hono } from 'hono';
 import type { Env } from '../types';
 import { adminAuth } from '../middleware/admin';
-import { createUser } from '../db/users';
+import { createUser, getUserById, listUsers, updateUser, deleteUser } from '../db/users';
 import { createClient } from '../db/clients';
 import { hashPassword } from '../crypto/password';
-import { CreateUserSchema, CreateClientSchema } from '../schemas';
+import { CreateUserSchema, CreateClientSchema, UpdateUserSchema, ListUsersQuerySchema } from '../schemas';
 
 const adminRouter = new Hono<{ Bindings: Env }>();
 
@@ -87,6 +87,116 @@ adminRouter.post('/clients', async (c) => {
     },
     201,
   );
+});
+
+// ── GET /admin/users ──────────────────────────────────────────────────────────
+
+adminRouter.get('/users', async (c) => {
+  const query = ListUsersQuerySchema.safeParse({
+    search: c.req.query('search'),
+    limit: c.req.query('limit'),
+    offset: c.req.query('offset'),
+  });
+
+  if (!query.success) {
+    return c.json(
+      {
+        error: 'invalid_request',
+        error_description: query.error.issues[0]?.message ?? 'Validation failed',
+      },
+      400,
+    );
+  }
+
+  const { users, total } = await listUsers(c.env.OIDC_DB, query.data);
+
+  return c.json({
+    users: users.map((u) => ({
+      id: u.id,
+      email: u.email,
+      is_active: u.is_active,
+      created_at: u.created_at,
+      updated_at: u.updated_at,
+      profile_json: u.profile_json,
+    })),
+    total,
+    limit: query.data.limit,
+    offset: query.data.offset,
+  });
+});
+
+// ── GET /admin/users/:id ──────────────────────────────────────────────────────
+
+adminRouter.get('/users/:id', async (c) => {
+  const user = await getUserById(c.env.OIDC_DB, c.req.param('id'));
+
+  if (!user) {
+    return c.json({ error: 'not_found', error_description: 'User not found' }, 404);
+  }
+
+  return c.json({
+    id: user.id,
+    email: user.email,
+    is_active: user.is_active,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+    profile_json: user.profile_json,
+  });
+});
+
+// ── PATCH /admin/users/:id ────────────────────────────────────────────────────
+
+adminRouter.patch('/users/:id', async (c) => {
+  const body: unknown = await c.req.json().catch(() => null);
+  const parsed = UpdateUserSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return c.json(
+      {
+        error: 'invalid_request',
+        error_description: parsed.error.issues[0]?.message ?? 'Validation failed',
+      },
+      400,
+    );
+  }
+
+  const { email, password, is_active, profile } = parsed.data;
+
+  // Build the patch, only including fields that were actually provided.
+  // exactOptionalPropertyTypes prevents passing undefined for optional fields.
+  type UserPatch = Parameters<typeof updateUser>[2];
+  const patch: UserPatch = {};
+  if (email !== undefined) patch.email = email;
+  if (is_active !== undefined) patch.is_active = is_active;
+  if (password !== undefined) patch.password_hash = await hashPassword(password);
+  if (profile !== undefined) patch.profile_json = JSON.stringify(profile);
+
+  const updated = await updateUser(c.env.OIDC_DB, c.req.param('id'), patch);
+
+  if (!updated) {
+    return c.json({ error: 'not_found', error_description: 'User not found' }, 404);
+  }
+
+  return c.json({
+    id: updated.id,
+    email: updated.email,
+    is_active: updated.is_active,
+    created_at: updated.created_at,
+    updated_at: updated.updated_at,
+    profile_json: updated.profile_json,
+  });
+});
+
+// ── DELETE /admin/users/:id ───────────────────────────────────────────────────
+
+adminRouter.delete('/users/:id', async (c) => {
+  const deleted = await deleteUser(c.env.OIDC_DB, c.req.param('id'));
+
+  if (!deleted) {
+    return c.json({ error: 'not_found', error_description: 'User not found' }, 404);
+  }
+
+  return new Response(null, { status: 204 });
 });
 
 export { adminRouter };

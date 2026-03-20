@@ -49,18 +49,32 @@ beforeEach(() => {
   };
 });
 
-const adminPost = (path: string, body: unknown, apiKey?: string): Promise<Response> =>
+const adminRequest = (
+  method: string,
+  path: string,
+  body?: unknown,
+  apiKey?: string,
+): Promise<Response> =>
   app.fetch(
     new Request(`http://localhost${path}`, {
-      method: 'POST',
+      method,
       headers: {
         'content-type': 'application/json',
         ...(apiKey !== undefined ? { 'x-admin-api-key': apiKey } : {}),
       },
-      body: JSON.stringify(body),
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
     }),
     testEnv,
   );
+
+const adminPost = (path: string, body: unknown, apiKey?: string) =>
+  adminRequest('POST', path, body, apiKey);
+const adminGet = (path: string, apiKey = 'test-admin-secret') =>
+  adminRequest('GET', path, undefined, apiKey);
+const adminPatch = (path: string, body: unknown, apiKey = 'test-admin-secret') =>
+  adminRequest('PATCH', path, body, apiKey);
+const adminDelete = (path: string, apiKey = 'test-admin-secret') =>
+  adminRequest('DELETE', path, undefined, apiKey);
 
 // ── Admin auth middleware ─────────────────────────────────────────────────────
 
@@ -189,5 +203,129 @@ describe('POST /admin/clients', () => {
       'test-admin-secret',
     );
     expect(res.status).toBe(400);
+  });
+});
+
+// ── GET /admin/users ──────────────────────────────────────────────────────────
+
+describe('GET /admin/users', () => {
+  beforeEach(async () => {
+    await adminPost('/admin/users', { email: 'alice@example.com', password: 'password123' }, 'test-admin-secret');
+    await adminPost('/admin/users', { email: 'bob@example.com', password: 'password123' }, 'test-admin-secret');
+  });
+
+  it('returns all users with total count', async () => {
+    const res = await adminGet('/admin/users');
+    expect(res.status).toBe(200);
+    const body = await res.json() as { users: unknown[]; total: number };
+    expect(body.users).toHaveLength(2);
+    expect(body.total).toBe(2);
+  });
+
+  it('never exposes password_hash in the response', async () => {
+    const res = await adminGet('/admin/users');
+    const body = await res.json() as { users: Record<string, unknown>[] };
+    for (const user of body.users) {
+      expect(user['password_hash']).toBeUndefined();
+    }
+  });
+
+  it('filters users by search term', async () => {
+    const res = await adminGet('/admin/users?search=alice');
+    const body = await res.json() as { users: { email: string }[]; total: number };
+    expect(body.total).toBe(1);
+    expect(body.users[0].email).toBe('alice@example.com');
+  });
+
+  it('respects limit and offset', async () => {
+    const res = await adminGet('/admin/users?limit=1&offset=0');
+    const body = await res.json() as { users: unknown[] };
+    expect(body.users).toHaveLength(1);
+  });
+
+  it('returns 401 without API key', async () => {
+    const res = await adminGet('/admin/users', '');
+    expect(res.status).toBe(401);
+  });
+});
+
+// ── GET /admin/users/:id ──────────────────────────────────────────────────────
+
+describe('GET /admin/users/:id', () => {
+  it('returns the user by id', async () => {
+    const created = await (await adminPost('/admin/users', { email: 'carol@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const res = await adminGet(`/admin/users/${created.id}`);
+    expect(res.status).toBe(200);
+    const body = await res.json() as { email: string; id: string };
+    expect(body.id).toBe(created.id);
+    expect(body.email).toBe('carol@example.com');
+  });
+
+  it('returns 404 for unknown id', async () => {
+    const res = await adminGet('/admin/users/nonexistent-id');
+    expect(res.status).toBe(404);
+    const body = await res.json() as { error: string };
+    expect(body.error).toBe('not_found');
+  });
+});
+
+// ── PATCH /admin/users/:id ────────────────────────────────────────────────────
+
+describe('PATCH /admin/users/:id', () => {
+  it('updates email', async () => {
+    const created = await (await adminPost('/admin/users', { email: 'old@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const res = await adminPatch(`/admin/users/${created.id}`, { email: 'new@example.com' });
+    expect(res.status).toBe(200);
+    const body = await res.json() as { email: string };
+    expect(body.email).toBe('new@example.com');
+  });
+
+  it('deactivates a user', async () => {
+    const created = await (await adminPost('/admin/users', { email: 'deact@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const res = await adminPatch(`/admin/users/${created.id}`, { is_active: false });
+    expect(res.status).toBe(200);
+    const body = await res.json() as { is_active: number };
+    expect(body.is_active).toBe(0);
+  });
+
+  it('reactivates a user', async () => {
+    const created = await (await adminPost('/admin/users', { email: 'react@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    await adminPatch(`/admin/users/${created.id}`, { is_active: false });
+    const res = await adminPatch(`/admin/users/${created.id}`, { is_active: true });
+    const body = await res.json() as { is_active: number };
+    expect(body.is_active).toBe(1);
+  });
+
+  it('returns 404 for unknown id', async () => {
+    const res = await adminPatch('/admin/users/nonexistent', { is_active: false });
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 400 for empty body', async () => {
+    const created = await (await adminPost('/admin/users', { email: 'empty@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const res = await adminPatch(`/admin/users/${created.id}`, {});
+    expect(res.status).toBe(400);
+  });
+});
+
+// ── DELETE /admin/users/:id ───────────────────────────────────────────────────
+
+describe('DELETE /admin/users/:id', () => {
+  it('deletes a user and returns 204', async () => {
+    const created = await (await adminPost('/admin/users', { email: 'del@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    const res = await adminDelete(`/admin/users/${created.id}`);
+    expect(res.status).toBe(204);
+  });
+
+  it('user is gone after deletion', async () => {
+    const created = await (await adminPost('/admin/users', { email: 'gone@example.com', password: 'password123' }, 'test-admin-secret')).json() as { id: string };
+    await adminDelete(`/admin/users/${created.id}`);
+    const res = await adminGet(`/admin/users/${created.id}`);
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 404 for unknown id', async () => {
+    const res = await adminDelete('/admin/users/nonexistent');
+    expect(res.status).toBe(404);
   });
 });
