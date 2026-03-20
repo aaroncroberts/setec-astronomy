@@ -69,7 +69,7 @@ export async function handleToken(c: Context<{ Bindings: Env }>): Promise<Respon
 
   // Confidential clients must authenticate via client_secret
   if (client.is_confidential === 1) {
-    const clientSecret = basicCreds?.clientSecret ?? (form.get('client_secret') as string | null);
+    const clientSecret = basicCreds?.clientSecret ?? form.get('client_secret');
     if (!clientSecret || !(await verifyClientSecret(client, clientSecret))) {
       return tokenError(c, 'invalid_client', 'Invalid client credentials', 401);
     }
