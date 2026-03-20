@@ -3,6 +3,8 @@
 The admin API allows privileged management of users and OAuth clients.
 All endpoints require an `x-admin-api-key` header with the value configured as the `ADMIN_API_KEY` Worker secret.
 
+> For the full user lifecycle guide (deactivation vs. deletion, session invalidation, operator workflows), see [User Management Guide](./user-management.md).
+
 ## Authentication
 
 All admin requests must include:
@@ -120,6 +122,67 @@ curl -X POST https://your-worker.workers.dev/admin/clients \
 | ------ | ----------------- | ---------------------------------------------------------- |
 | 400    | `invalid_request` | Missing `openid` scope, invalid redirect URI, missing name |
 | 401    | `unauthorized`    | Missing or wrong `x-admin-api-key`                         |
+
+---
+
+## GET /admin/users
+
+Lists all users. Supports optional search and pagination. See [User Management Guide](./user-management.md#get-adminusers) for full details.
+
+```bash
+curl "https://your-worker.workers.dev/admin/users?search=alice&limit=20&offset=0" \
+  -H "x-admin-api-key: $ADMIN_API_KEY"
+```
+
+**Query parameters:** `search` (substring), `limit` (default 20, max 100), `offset` (default 0).
+
+**Response: 200 OK** — `{ users: User[], total: number, limit: number, offset: number }`
+
+---
+
+## GET /admin/users/:id
+
+Fetches a single user by UUID.
+
+```bash
+curl https://your-worker.workers.dev/admin/users/$USER_ID \
+  -H "x-admin-api-key: $ADMIN_API_KEY"
+```
+
+**Response: 200 OK** — user object. **404** if not found.
+
+---
+
+## PATCH /admin/users/:id
+
+Partially updates a user — profile, email, password, or `is_active`. See [User Management Guide](./user-management.md#patch-adminusersid) for full details and operator workflows.
+
+```bash
+# Deactivate
+curl -X PATCH https://your-worker.workers.dev/admin/users/$USER_ID \
+  -H "x-admin-api-key: $ADMIN_API_KEY" \
+  -H "content-type: application/json" \
+  -d '{"is_active": false}'
+```
+
+**Request body (all optional, at least one required):** `email`, `password`, `is_active`, `profile` (`name`, `groups`).
+
+**Response: 200 OK** — updated user. **400** for empty body. **404** if not found.
+
+---
+
+## DELETE /admin/users/:id
+
+Hard-deletes a user permanently.
+
+```bash
+curl -X DELETE https://your-worker.workers.dev/admin/users/$USER_ID \
+  -H "x-admin-api-key: $ADMIN_API_KEY"
+```
+
+**Response: 204 No Content.** **404** if not found.
+
+> Prefer `PATCH {"is_active": false}` for offboarding. Use DELETE only for permanent erasure (e.g., GDPR).
 
 ---
 

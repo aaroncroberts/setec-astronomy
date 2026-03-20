@@ -1,6 +1,6 @@
 {
   "name": "oidc-idp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Enterprise-grade OIDC Identity Provider on Cloudflare Workers",
   "private": true,
   "type": "module",

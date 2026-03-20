@@ -178,12 +178,13 @@ npm run dev
 
 ## Documentation
 
-| Document                                                   | Description                                                |
-| ---------------------------------------------------------- | ---------------------------------------------------------- |
-| [docs/deployment.md](docs/deployment.md)                   | First deploy, secrets, migrations, Zero Trust registration |
-| [docs/admin-api.md](docs/admin-api.md)                     | Managing users and clients via the admin API               |
-| [docs/key-rotation.md](docs/key-rotation.md)               | RSA key rotation without downtime                          |
-| [docs/cloudflare-oidc-idp.md](docs/cloudflare-oidc-idp.md) | Architecture, design decisions, threat model               |
+| Document                                                   | Description                                                 |
+| ---------------------------------------------------------- | ----------------------------------------------------------- |
+| [docs/deployment.md](docs/deployment.md)                   | First deploy, secrets, migrations, Zero Trust registration  |
+| [docs/admin-api.md](docs/admin-api.md)                     | Managing users and clients via the admin API                |
+| [docs/user-management.md](docs/user-management.md)         | User model, lifecycle, deactivation vs. deletion, workflows |
+| [docs/key-rotation.md](docs/key-rotation.md)               | RSA key rotation without downtime                           |
+| [docs/cloudflare-oidc-idp.md](docs/cloudflare-oidc-idp.md) | Architecture, design decisions, threat model                |
 
 ## License
 
