@@ -44,9 +44,21 @@ export async function handleToken(c: Context<{ Bindings: Env }>): Promise<Respon
   const {
     code,
     redirect_uri: redirectUri,
-    client_id: clientId,
     code_verifier: codeVerifier,
   } = parsed.data;
+
+  // ── Resolve client credentials ─────────────────────────────────────────────
+  // RFC 6749 §2.3.1: confidential clients MAY use Authorization: Basic, in
+  // which case client_id is the Basic username and client_secret is the
+  // Basic password.  Accept credentials from either the Basic header or the
+  // form body, with the header taking precedence.
+
+  const basicCreds = extractBasicAuthCredentials(c);
+  const clientId = basicCreds?.clientId ?? parsed.data.client_id;
+
+  if (!clientId) {
+    return tokenError(c, 'invalid_request', 'client_id is required', 400);
+  }
 
   // ── Load and validate client ───────────────────────────────────────────────
 
@@ -57,7 +69,7 @@ export async function handleToken(c: Context<{ Bindings: Env }>): Promise<Respon
 
   // Confidential clients must authenticate via client_secret
   if (client.is_confidential === 1) {
-    const clientSecret = extractClientSecret(c, form);
+    const clientSecret = basicCreds?.clientSecret ?? (form.get('client_secret') as string | null);
     if (!clientSecret || !(await verifyClientSecret(client, clientSecret))) {
       return tokenError(c, 'invalid_client', 'Invalid client credentials', 401);
     }
@@ -152,16 +164,29 @@ function tokenError(
   return c.json({ error, error_description: description }, status);
 }
 
-/** Extract client_secret from HTTP Basic auth header or form body */
-function extractClientSecret(c: Context<{ Bindings: Env }>, form: FormData): string | null {
+/**
+ * Decode an Authorization: Basic header into its clientId + clientSecret
+ * components.  Returns null if the header is absent or malformed.
+ *
+ * Per RFC 6749 §2.3.1 the credentials are base64url(client_id):client_secret,
+ * where the client_id is percent-encoded per Appendix B.
+ */
+function extractBasicAuthCredentials(
+  c: Context<{ Bindings: Env }>,
+): { clientId: string; clientSecret: string } | null {
   const authHeader = c.req.header('authorization');
-  if (authHeader?.startsWith('Basic ')) {
+  if (!authHeader?.startsWith('Basic ')) return null;
+  try {
     const decoded = atob(authHeader.slice(6));
     const colon = decoded.indexOf(':');
-    if (colon !== -1) return decoded.slice(colon + 1);
+    if (colon === -1) return null;
+    const clientId = decodeURIComponent(decoded.slice(0, colon));
+    const clientSecret = decodeURIComponent(decoded.slice(colon + 1));
+    if (!clientId || !clientSecret) return null;
+    return { clientId, clientSecret };
+  } catch {
+    return null;
   }
-  const bodySecret = form.get('client_secret');
-  return typeof bodySecret === 'string' ? bodySecret : null;
 }
 
 function buildIdTokenClaims(

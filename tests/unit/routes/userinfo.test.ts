@@ -107,7 +107,7 @@ describe('GET /userinfo', () => {
     const res = await getInfo(token);
     const body = await res.json();
     expect(body.email).toBe('alice@example.com');
-    expect(body.email_verified).toBe(false);
+    expect(body.email_verified).toBe(true);
   });
 
   it('does not include email when email scope not granted', async () => {

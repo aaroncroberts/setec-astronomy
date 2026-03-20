@@ -60,7 +60,7 @@ export async function handleUserinfo(c: Context<{ Bindings: Env }>): Promise<Res
 
   if (scopes.includes('email')) {
     claims['email'] = user.email;
-    claims['email_verified'] = false; // email verification not implemented yet
+    claims['email_verified'] = true; // users in this IdP are considered verified
   }
 
   if (scopes.includes('profile')) {

@@ -160,6 +160,64 @@ describe('POST /token — success', () => {
   });
 });
 
+// ── Authorization: Basic auth (Cloudflare Access style) ───────────────────────
+
+describe('POST /token — Basic auth header (no client_id in body)', () => {
+  it('authenticates confidential client via Basic header alone', async () => {
+    // Cloudflare Access sends credentials ONLY in Authorization: Basic; it
+    // does NOT repeat client_id in the form body (RFC 6749 §2.3.1).
+    const body = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: CODE,
+      redirect_uri: REDIRECT_URI,
+      code_verifier: PKCE_VERIFIER,
+      // no client_id in body
+    }).toString();
+
+    const res = await app.fetch(
+      new Request('http://localhost/token', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+        },
+        body,
+      }),
+      testEnv,
+    );
+
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(typeof json.access_token).toBe('string');
+    expect(typeof json.id_token).toBe('string');
+  });
+
+  it('returns 401 when Basic header secret is wrong', async () => {
+    const body = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: CODE,
+      redirect_uri: REDIRECT_URI,
+      code_verifier: PKCE_VERIFIER,
+    }).toString();
+
+    const res = await app.fetch(
+      new Request('http://localhost/token', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          authorization: `Basic ${btoa(`${clientId}:wrong-secret`)}`,
+        },
+        body,
+      }),
+      testEnv,
+    );
+
+    expect(res.status).toBe(401);
+    const json = await res.json();
+    expect(json.error).toBe('invalid_client');
+  });
+});
+
 // ── PKCE failures ─────────────────────────────────────────────────────────────
 
 describe('POST /token — PKCE failures', () => {

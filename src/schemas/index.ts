@@ -29,7 +29,10 @@ export const TokenRequestSchema = z.object({
   grant_type: z.literal('authorization_code'),
   code: z.string().min(1, 'code is required'),
   redirect_uri: z.string().url('redirect_uri must be a valid URL'),
-  client_id: z.string().min(1, 'client_id is required'),
+  // client_id is optional in the body when the client authenticates via
+  // Authorization: Basic (RFC 6749 §2.3.1) — the username in the Basic
+  // header IS the client_id.  We resolve it after schema parsing.
+  client_id: z.string().min(1).optional(),
   code_verifier: z.string().min(43, 'code_verifier must be at least 43 characters').max(128),
   client_secret: z.string().optional(),
 });

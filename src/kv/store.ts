@@ -19,9 +19,18 @@ export const SESSION_TTL = 86_400;
 
 // ── Key namespaces ────────────────────────────────────────────────────────────
 
+// Workers KV keys have a 512-byte limit. State values from some OIDC clients
+// (e.g. Cloudflare Zero Trust) can be several hundred characters. We SHA-256
+// hash any value used as a state key to keep it within the limit.
+async function hashKey(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 const keys = {
   authCode: (code: string) => `auth_code:${code}`,
-  state: (state: string) => `state:${state}`,
   session: (sessionId: string) => `session:${sessionId}`,
 } as const;
 
@@ -82,11 +91,13 @@ export async function putState(
   data: StateData,
   ttl = STATE_TTL,
 ): Promise<void> {
-  await kv.put(keys.state(state), JSON.stringify(data), { expirationTtl: ttl });
+  const key = `state:${await hashKey(state)}`;
+  await kv.put(key, JSON.stringify(data), { expirationTtl: ttl });
 }
 
 export async function getState(kv: KVNamespace, state: string): Promise<StateData | null> {
-  const raw = await kv.get(keys.state(state));
+  const key = `state:${await hashKey(state)}`;
+  const raw = await kv.get(key);
   if (raw === null) return null;
   return JSON.parse(raw) as StateData;
 }
