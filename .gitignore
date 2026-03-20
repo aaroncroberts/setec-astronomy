@@ -137,3 +137,22 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
+
+# Node / Worker build artifacts
+node_modules/
+dist/
+.wrangler/
+coverage/
+
+# Environment secrets (never commit)
+.dev.vars
+.env
+.env.*
+!.env.example
+
+# Beads runtime credentials (sensitive, never commit)
+.beads/.beads-credential-key
