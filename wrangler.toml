@@ -2,6 +2,7 @@ name = "oidc-idp"
 main = "src/index.ts"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
+account_id = "5def4131bcd4c2f86727fd3ba888db1d"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # D1 Database — persistent storage for users, clients, refresh tokens
@@ -9,22 +10,22 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "OIDC_DB"
 database_name = "oidc-idp"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "aadd7def-ae8b-46c7-8b28-cbe16ccd527c"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # KV Namespace — short-lived state: auth codes, PKCE, sessions, nonces
 # ──────────────────────────────────────────────────────────────────────────────
 [[kv_namespaces]]
 binding = "OIDC_KV"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
-preview_id = "REPLACE_WITH_KV_PREVIEW_ID"
+id = "1972ca96b3d744e185ec02a7bc84f31a"
+preview_id = "0f40aa29010c4251ad0c5196bf663c6e"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Environment Variables
 # Set ISSUER to your Worker's public URL (e.g. https://idp.example.com)
 # ──────────────────────────────────────────────────────────────────────────────
 [vars]
-ISSUER = "https://idp.example.com"
+ISSUER = "https://oidc-idp.aroberts-icitadel.workers.dev"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Secrets (set via: wrangler secret put <NAME>)
@@ -35,11 +36,8 @@ ISSUER = "https://idp.example.com"
 # ──────────────────────────────────────────────────────────────────────────────
 # Local development overrides
 # wrangler dev uses local SQLite (.wrangler/state/) automatically.
-# Secrets are loaded from .dev.vars (see .dev.vars.example).
+# Secrets and var overrides (e.g. ISSUER) are loaded from .dev.vars.
 # ──────────────────────────────────────────────────────────────────────────────
 [dev]
 port = 8787
 local_protocol = "http"
-
-[env.local.vars]
-ISSUER = "http://localhost:8787"
