@@ -3,6 +3,9 @@ import type { Env } from './types';
 import { handleDiscovery, handleJwks } from './routes/discovery';
 import { handleAuthorize } from './routes/authorize';
 import { handleLoginForm, handleLoginPost } from './routes/login';
+import { handleToken } from './routes/token';
+import { handleUserinfo } from './routes/userinfo';
+import { handleLogout } from './routes/logout';
 import { adminRouter } from './routes/admin';
 
 /**
@@ -22,6 +25,12 @@ export function createApp(): Hono<{ Bindings: Env }> {
   app.get('/authorize', handleAuthorize);
   app.get('/login', handleLoginForm);
   app.post('/login', handleLoginPost);
+
+  // ── Token, Userinfo, Logout ───────────────────────────────────────────────
+  app.post('/token', handleToken);
+  app.get('/userinfo', handleUserinfo);
+  app.post('/userinfo', handleUserinfo); // OIDC spec allows POST too
+  app.get('/logout', handleLogout);
 
   // ── Admin API ─────────────────────────────────────────────────────────────
   app.route('/admin', adminRouter);
