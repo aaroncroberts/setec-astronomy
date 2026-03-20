@@ -124,7 +124,11 @@ describe('POST /login — success', () => {
 
 describe('POST /login — failures', () => {
   it('redirects to /login with error for wrong password', async () => {
-    const res = await postLogin({ email: TEST_EMAIL, password: 'wrong-password', state: TEST_STATE });
+    const res = await postLogin({
+      email: TEST_EMAIL,
+      password: 'wrong-password',
+      state: TEST_STATE,
+    });
     expect(res.status).toBe(302);
     const location = res.headers.get('location')!;
     expect(location).toContain('/login');
@@ -145,7 +149,11 @@ describe('POST /login — failures', () => {
   });
 
   it('redirects to /login with error for missing state', async () => {
-    const res = await postLogin({ email: TEST_EMAIL, password: TEST_PASSWORD, state: 'no-such-state' });
+    const res = await postLogin({
+      email: TEST_EMAIL,
+      password: TEST_PASSWORD,
+      state: 'no-such-state',
+    });
     expect(res.status).toBe(302);
     const location = res.headers.get('location')!;
     expect(location).toContain('/login');

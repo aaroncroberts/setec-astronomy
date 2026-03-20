@@ -71,7 +71,7 @@ describe('GET /.well-known/openid-configuration', () => {
       new Request('http://localhost/.well-known/openid-configuration'),
       testEnv,
     );
-    const doc = (await res.json());
+    const doc = await res.json();
 
     for (const field of REQUIRED_DISCOVERY_FIELDS) {
       expect(doc, `Missing required field: ${field}`).toHaveProperty(field);
@@ -83,7 +83,7 @@ describe('GET /.well-known/openid-configuration', () => {
       new Request('http://localhost/.well-known/openid-configuration'),
       testEnv,
     );
-    const doc = (await res.json());
+    const doc = await res.json();
     expect(doc.issuer).toBe('https://idp.example.com');
   });
 
@@ -92,7 +92,7 @@ describe('GET /.well-known/openid-configuration', () => {
       new Request('http://localhost/.well-known/openid-configuration'),
       testEnv,
     );
-    const doc = (await res.json());
+    const doc = await res.json();
     expect(doc.authorization_endpoint).toBe('https://idp.example.com/authorize');
     expect(doc.token_endpoint).toBe('https://idp.example.com/token');
     expect(doc.jwks_uri).toBe('https://idp.example.com/jwks.json');
@@ -104,7 +104,7 @@ describe('GET /.well-known/openid-configuration', () => {
       new Request('http://localhost/.well-known/openid-configuration'),
       testEnv,
     );
-    const doc = (await res.json());
+    const doc = await res.json();
     expect(doc.response_types_supported).toContain('code');
     expect(doc.grant_types_supported).toContain('authorization_code');
   });
@@ -114,7 +114,7 @@ describe('GET /.well-known/openid-configuration', () => {
       new Request('http://localhost/.well-known/openid-configuration'),
       testEnv,
     );
-    const doc = (await res.json());
+    const doc = await res.json();
     expect(doc.code_challenge_methods_supported).toContain('S256');
   });
 
@@ -123,7 +123,7 @@ describe('GET /.well-known/openid-configuration', () => {
       new Request('http://localhost/.well-known/openid-configuration'),
       testEnv,
     );
-    const doc = (await res.json());
+    const doc = await res.json();
     expect(doc.id_token_signing_alg_values_supported).toContain('RS256');
   });
 });
@@ -137,7 +137,7 @@ describe('GET /jwks.json', () => {
 
   it('returns { keys: [...] } with at least one key', async () => {
     const res = await app.fetch(new Request('http://localhost/jwks.json'), testEnv);
-    const body = (await res.json());
+    const body = await res.json();
     expect(body).toHaveProperty('keys');
     expect(Array.isArray(body.keys)).toBe(true);
     expect(body.keys.length).toBeGreaterThan(0);
@@ -145,7 +145,7 @@ describe('GET /jwks.json', () => {
 
   it('key has required JWKS fields: kty, kid, use, alg, n, e', async () => {
     const res = await app.fetch(new Request('http://localhost/jwks.json'), testEnv);
-    const body = (await res.json());
+    const body = await res.json();
     const key = body.keys[0]!;
 
     expect(key.kty).toBe('RSA');

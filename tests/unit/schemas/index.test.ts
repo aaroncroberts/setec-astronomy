@@ -25,11 +25,15 @@ describe('AuthorizeRequestSchema', () => {
   });
 
   it('rejects wrong response_type', () => {
-    expect(AuthorizeRequestSchema.safeParse({ ...valid, response_type: 'token' }).success).toBe(false);
+    expect(AuthorizeRequestSchema.safeParse({ ...valid, response_type: 'token' }).success).toBe(
+      false,
+    );
   });
 
   it('rejects plain code_challenge_method', () => {
-    expect(AuthorizeRequestSchema.safeParse({ ...valid, code_challenge_method: 'plain' }).success).toBe(false);
+    expect(
+      AuthorizeRequestSchema.safeParse({ ...valid, code_challenge_method: 'plain' }).success,
+    ).toBe(false);
   });
 
   it('rejects missing state', () => {
@@ -63,7 +67,9 @@ describe('TokenRequestSchema', () => {
   });
 
   it('rejects wrong grant_type', () => {
-    expect(TokenRequestSchema.safeParse({ ...valid, grant_type: 'client_credentials' }).success).toBe(false);
+    expect(
+      TokenRequestSchema.safeParse({ ...valid, grant_type: 'client_credentials' }).success,
+    ).toBe(false);
   });
 });
 
@@ -100,7 +106,10 @@ describe('CreateUserSchema', () => {
   });
 
   it('accepts optional profile with groups', () => {
-    const result = CreateUserSchema.safeParse({ ...valid, profile: { name: 'Alice', groups: ['admin'] } });
+    const result = CreateUserSchema.safeParse({
+      ...valid,
+      profile: { name: 'Alice', groups: ['admin'] },
+    });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.profile?.groups).toEqual(['admin']);
   });
@@ -121,11 +130,15 @@ describe('CreateClientSchema', () => {
   });
 
   it('rejects missing openid scope', () => {
-    expect(CreateClientSchema.safeParse({ ...valid, allowed_scopes: ['email'] }).success).toBe(false);
+    expect(CreateClientSchema.safeParse({ ...valid, allowed_scopes: ['email'] }).success).toBe(
+      false,
+    );
   });
 
   it('rejects invalid redirect URI', () => {
-    expect(CreateClientSchema.safeParse({ ...valid, redirect_uris: ['not-a-url'] }).success).toBe(false);
+    expect(CreateClientSchema.safeParse({ ...valid, redirect_uris: ['not-a-url'] }).success).toBe(
+      false,
+    );
   });
 
   it('defaults is_confidential to true', () => {

@@ -85,10 +85,7 @@ describe('CORS middleware', () => {
   });
 
   it('/authorize does not include CORS headers', async () => {
-    const res = await app.fetch(
-      new Request('http://localhost/authorize?client_id=x'),
-      testEnv,
-    );
+    const res = await app.fetch(new Request('http://localhost/authorize?client_id=x'), testEnv);
     // /authorize is a browser redirect endpoint — no CORS needed
     expect(res.headers.get('access-control-allow-origin')).toBeNull();
   });

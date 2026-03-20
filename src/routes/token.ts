@@ -28,9 +28,7 @@ export async function handleToken(c: Context<{ Bindings: Env }>): Promise<Respon
   }
 
   // Build plain object from FormData for Zod validation
-  const raw = Object.fromEntries(
-    [...form.entries()].map(([k, v]) => [k, String(v)]),
-  );
+  const raw = Object.fromEntries([...form.entries()].map(([k, v]) => [k, String(v)]));
 
   // Check grant_type first for correct RFC 6749 error code
   if (raw['grant_type'] !== 'authorization_code') {
@@ -43,7 +41,12 @@ export async function handleToken(c: Context<{ Bindings: Env }>): Promise<Respon
     return tokenError(c, 'invalid_request', message, 400);
   }
 
-  const { code, redirect_uri: redirectUri, client_id: clientId, code_verifier: codeVerifier } = parsed.data;
+  const {
+    code,
+    redirect_uri: redirectUri,
+    client_id: clientId,
+    code_verifier: codeVerifier,
+  } = parsed.data;
 
   // ── Load and validate client ───────────────────────────────────────────────
 
@@ -101,7 +104,14 @@ export async function handleToken(c: Context<{ Bindings: Env }>): Promise<Respon
   const grantedScopes = requestedScopes.filter((s) => allowedClientScopes.includes(s));
   const profile = parseUserProfile(user);
 
-  const idClaims = buildIdTokenClaims(c.env.ISSUER, user, clientId, grantedScopes, profile, codeData.nonce);
+  const idClaims = buildIdTokenClaims(
+    c.env.ISSUER,
+    user,
+    clientId,
+    grantedScopes,
+    profile,
+    codeData.nonce,
+  );
 
   // ── Sign tokens ────────────────────────────────────────────────────────────
 

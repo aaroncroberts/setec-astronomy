@@ -120,9 +120,9 @@ Skill(skill="ig-evaluate", args="{directory}/*.webp")
 🎨 AUTOMATED INFOGRAPHIC GENERATION COMPLETE
 ═══════════════════════════════════════════════
 
-🏆 **Winner:** {best_variant_overall} ({best_score_overall}/100)
-📦 **Batches:** {current_batch} ({current_batch _ 3} variants total)
-💰 **Cost:** FREE ({current_batch _ 3}/500 daily quota used)
+🏆 **Winner:** {best*variant_overall} ({best_score_overall}/100)
+📦 **Batches:** {current_batch} ({current_batch * 3} variants total)
+💰 **Cost:** FREE ({current*batch * 3}/500 daily quota used)
 
 🎯 **Recommendation:** Use {best_variant_overall} for publication
 

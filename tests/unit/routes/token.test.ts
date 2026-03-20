@@ -126,16 +126,14 @@ const postToken = (fields: Record<string, string>, secret?: string): Promise<Res
 
 describe('POST /token — success', () => {
   it('returns access_token, id_token, token_type, expires_in', async () => {
-    const res = await postToken(
-      {
-        grant_type: 'authorization_code',
-        code: CODE,
-        redirect_uri: REDIRECT_URI,
-        client_id: clientId,
-        client_secret: clientSecret,
-        code_verifier: PKCE_VERIFIER,
-      },
-    );
+    const res = await postToken({
+      grant_type: 'authorization_code',
+      code: CODE,
+      redirect_uri: REDIRECT_URI,
+      client_id: clientId,
+      client_secret: clientSecret,
+      code_verifier: PKCE_VERIFIER,
+    });
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(typeof body.access_token).toBe('string');

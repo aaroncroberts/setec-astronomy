@@ -43,7 +43,10 @@ export async function handleJwks(c: Context<{ Bindings: Env }>): Promise<Respons
   // During rotation: store old public key parameters in a Worker secret or KV
   // For simplicity, hardcode the old key's n and e parameters here temporarily
   const oldJwk: JwkPublicKey = {
-    kty: 'RSA', kid: 'key-1', use: 'sig', alg: 'RS256',
+    kty: 'RSA',
+    kid: 'key-1',
+    use: 'sig',
+    alg: 'RS256',
     n: '<old-key-n-parameter>',
     e: 'AQAB',
   };
@@ -95,7 +98,7 @@ export async function handleJwks(c: Context<{ Bindings: Env }>): Promise<Respons
 Also update the `KID` constant in `src/routes/token.ts` and `src/routes/userinfo.ts`:
 
 ```typescript
-const KID = 'key-2';  // was 'key-1'
+const KID = 'key-2'; // was 'key-1'
 ```
 
 ```bash
@@ -141,11 +144,11 @@ wrangler deploy
 
 Keys are named `key-N` where N increments with each rotation:
 
-| Rotation | KID | Notes |
-|----------|-----|-------|
-| Initial deploy | `key-1` | Current default |
-| First rotation | `key-2` | After dual-key window |
-| Second rotation | `key-3` | And so on |
+| Rotation        | KID     | Notes                 |
+| --------------- | ------- | --------------------- |
+| Initial deploy  | `key-1` | Current default       |
+| First rotation  | `key-2` | After dual-key window |
+| Second rotation | `key-3` | And so on             |
 
 ---
 

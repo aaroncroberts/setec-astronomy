@@ -54,9 +54,7 @@ export class D1Mock {
         },
 
         run: () => {
-          const insert = query.match(
-            /INSERT INTO (\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/i,
-          );
+          const insert = query.match(/INSERT INTO (\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/i);
           if (insert?.[1] && insert?.[2]) {
             const tableName = insert[1];
             const cols = insert[2].split(',').map((c) => c.trim());
@@ -80,7 +78,10 @@ export class D1Mock {
             let row: Row | null = null;
 
             for (const r of getTable(tableName).values()) {
-              if (r[field] === value) { row = { ...r }; break; }
+              if (r[field] === value) {
+                row = { ...r };
+                break;
+              }
             }
 
             if (row && andMatch?.[1] && andMatch?.[2]) {

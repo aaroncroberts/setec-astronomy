@@ -35,7 +35,15 @@ export async function createUser(
     .bind(id, input.email, input.password_hash, now, now, 1, profile_json)
     .run();
 
-  return UserRowSchema.parse({ id, email: input.email, password_hash: input.password_hash, created_at: now, updated_at: now, is_active: 1, profile_json });
+  return UserRowSchema.parse({
+    id,
+    email: input.email,
+    password_hash: input.password_hash,
+    created_at: now,
+    updated_at: now,
+    is_active: 1,
+    profile_json,
+  });
 }
 
 /**

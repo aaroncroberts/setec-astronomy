@@ -32,7 +32,17 @@ export function handleDiscovery(c: Context<{ Bindings: Env }>): Response {
 
     // Scopes and claims
     scopes_supported: ['openid', 'email', 'profile'],
-    claims_supported: ['sub', 'iss', 'aud', 'exp', 'iat', 'email', 'email_verified', 'name', 'groups'],
+    claims_supported: [
+      'sub',
+      'iss',
+      'aud',
+      'exp',
+      'iat',
+      'email',
+      'email_verified',
+      'name',
+      'groups',
+    ],
 
     // PKCE
     code_challenge_methods_supported: ['S256'],

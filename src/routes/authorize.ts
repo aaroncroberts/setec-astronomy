@@ -48,7 +48,10 @@ export async function handleAuthorize(c: Context<{ Bindings: Env }>): Promise<Re
   const allowedUris = getRedirectUris(client);
   if (!allowedUris.includes(redirectUri)) {
     return c.json(
-      { error: 'invalid_request', error_description: 'redirect_uri does not match registered URIs' },
+      {
+        error: 'invalid_request',
+        error_description: 'redirect_uri does not match registered URIs',
+      },
       400,
     );
   }

@@ -74,8 +74,14 @@ export async function createClient(
     .run();
 
   const client = ClientRowSchema.parse({
-    id, client_secret: hashedSecret, name: input.name,
-    redirect_uris, allowed_scopes, created_at: now, updated_at: now, is_confidential,
+    id,
+    client_secret: hashedSecret,
+    name: input.name,
+    redirect_uris,
+    allowed_scopes,
+    created_at: now,
+    updated_at: now,
+    is_confidential,
   });
 
   return { client, clientSecret: plaintextSecret };

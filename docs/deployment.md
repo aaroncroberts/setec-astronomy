@@ -25,6 +25,7 @@ wrangler d1 create oidc-db
 ```
 
 Output example:
+
 ```
 ✅ Successfully created DB 'oidc-db' in region WEUR
 Created your new D1 database.
@@ -44,6 +45,7 @@ wrangler kv:namespace create oidc-kv
 ```
 
 Output example:
+
 ```
 [[kv_namespaces]]
 binding = "OIDC_KV"
@@ -109,6 +111,7 @@ wrangler d1 migrations apply oidc-db --remote
 ```
 
 Output:
+
 ```
 ✅ Successfully applied 3 migrations to oidc-db.
 ```

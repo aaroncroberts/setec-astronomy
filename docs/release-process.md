@@ -161,6 +161,7 @@ gh release view vX.Y.Z
 ```
 
 Confirm:
+
 - GitHub release exists with the correct tag
 - Release notes match the CHANGELOG `[X.Y.Z]` section
 - Cloudflare Worker deployment succeeded (check Wrangler dashboard)
@@ -182,10 +183,10 @@ git push origin aaron/agentic-coder
 
 ## Branch rules
 
-| Branch | Purpose | Delete after release? |
-| :--- | :--- | :--- |
-| `main` | Release branch — always green, always releasable | Never |
-| `aaron/agentic-coder` | Primary working branch | **Never** |
+| Branch                | Purpose                                          | Delete after release? |
+| :-------------------- | :----------------------------------------------- | :-------------------- |
+| `main`                | Release branch — always green, always releasable | Never                 |
+| `aaron/agentic-coder` | Primary working branch                           | **Never**             |
 
 ---
 

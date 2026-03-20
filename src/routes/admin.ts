@@ -19,7 +19,10 @@ adminRouter.post('/users', async (c) => {
 
   if (!parsed.success) {
     return c.json(
-      { error: 'invalid_request', error_description: parsed.error.issues[0]?.message ?? 'Validation failed' },
+      {
+        error: 'invalid_request',
+        error_description: parsed.error.issues[0]?.message ?? 'Validation failed',
+      },
       400,
     );
   }
@@ -54,7 +57,10 @@ adminRouter.post('/clients', async (c) => {
 
   if (!parsed.success) {
     return c.json(
-      { error: 'invalid_request', error_description: parsed.error.issues[0]?.message ?? 'Validation failed' },
+      {
+        error: 'invalid_request',
+        error_description: parsed.error.issues[0]?.message ?? 'Validation failed',
+      },
       400,
     );
   }

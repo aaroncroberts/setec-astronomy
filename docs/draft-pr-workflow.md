@@ -16,6 +16,7 @@ draft PR before writing the first line of code. The PR is a collaboration
 surface, not a delivery mechanism.
 
 **Core rules:**
+
 - The working branch is **never deleted** — it is the permanent home for
   in-progress work
 - Conflicts are resolved locally via merge, never rebase — this keeps
@@ -28,11 +29,11 @@ surface, not a delivery mechanism.
 
 ## Roles
 
-| Term | Meaning |
-| :--- | :--- |
+| Term               | Meaning                                                                       |
+| :----------------- | :---------------------------------------------------------------------------- |
 | `<working-branch>` | Your permanent development branch (e.g. `dev`, `next`, `aaron/agentic-coder`) |
-| `main` | The release branch — always green, always releasable |
-| `<version>` | The version being released (e.g. `v1.2.0`) |
+| `main`             | The release branch — always green, always releasable                          |
+| `<version>`        | The version being released (e.g. `v1.2.0`)                                    |
 
 ---
 
@@ -174,6 +175,7 @@ gh release view <version>
 ```
 
 Confirm:
+
 - GitHub release exists with the correct tag
 - Release notes match the CHANGELOG entry for `<version>`
 - Expected artifacts are attached
@@ -196,10 +198,10 @@ git push origin <working-branch>
 
 ## Branch rules
 
-| Branch | Purpose | Delete after release? |
-| :--- | :--- | :--- |
-| `main` | Release branch — always green | Never |
-| `<working-branch>` | Permanent development branch | **Never** |
+| Branch             | Purpose                       | Delete after release? |
+| :----------------- | :---------------------------- | :-------------------- |
+| `main`             | Release branch — always green | Never                 |
+| `<working-branch>` | Permanent development branch  | **Never**             |
 
 Short-lived topic branches are not used in this workflow. All work lands
 directly on `<working-branch>`.
@@ -217,13 +219,13 @@ merge commit is a clear record of when main's changes were integrated.
 
 ## Why open the draft PR first?
 
-| Late PR (traditional) | Draft PR (this workflow) |
-| :--- | :--- |
-| CI runs once, at the end | CI runs on every push |
-| Surprises at review time | Issues surface early |
+| Late PR (traditional)          | Draft PR (this workflow)                  |
+| :----------------------------- | :---------------------------------------- |
+| CI runs once, at the end       | CI runs on every push                     |
+| Surprises at review time       | Issues surface early                      |
 | Others can't contribute easily | PR is open for collaboration from day one |
-| PR is a gate | PR is a workspace |
-| Work invisible until "ready" | Work visible throughout |
+| PR is a gate                   | PR is a workspace                         |
+| Work invisible until "ready"   | Work visible throughout                   |
 
 ---
 

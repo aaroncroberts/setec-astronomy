@@ -37,13 +37,13 @@ curl -X POST https://your-worker.workers.dev/admin/users \
 
 ### Request body
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `email` | string | ✅ | Must be a valid email address |
-| `password` | string | ✅ | Minimum 8 characters |
-| `profile` | object | ❌ | Optional user profile |
-| `profile.name` | string | ❌ | Display name (appears in `name` claim) |
-| `profile.groups` | string[] | ❌ | Group memberships (appear in `groups` claim) |
+| Field            | Type     | Required | Description                                  |
+| ---------------- | -------- | -------- | -------------------------------------------- |
+| `email`          | string   | ✅       | Must be a valid email address                |
+| `password`       | string   | ✅       | Minimum 8 characters                         |
+| `profile`        | object   | ❌       | Optional user profile                        |
+| `profile.name`   | string   | ❌       | Display name (appears in `name` claim)       |
+| `profile.groups` | string[] | ❌       | Group memberships (appear in `groups` claim) |
 
 ### Response: 201 Created
 
@@ -61,10 +61,10 @@ The `password_hash` is never returned.
 
 ### Errors
 
-| Status | `error` | Cause |
-|--------|---------|-------|
-| 400 | `invalid_request` | Invalid email, short password, or malformed JSON |
-| 401 | `unauthorized` | Missing or wrong `x-admin-api-key` |
+| Status | `error`           | Cause                                            |
+| ------ | ----------------- | ------------------------------------------------ |
+| 400    | `invalid_request` | Invalid email, short password, or malformed JSON |
+| 401    | `unauthorized`    | Missing or wrong `x-admin-api-key`               |
 
 ---
 
@@ -91,12 +91,12 @@ curl -X POST https://your-worker.workers.dev/admin/clients \
 
 ### Request body
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `name` | string | ✅ | Human-readable client name |
-| `redirect_uris` | string[] | ✅ | Allowed redirect URIs (must be valid URLs) |
-| `allowed_scopes` | string[] | ✅ | Must include `openid`; may include `email`, `profile` |
-| `is_confidential` | boolean | ❌ | Default `true`. Set `false` for public clients (no secret) |
+| Field             | Type     | Required | Description                                                |
+| ----------------- | -------- | -------- | ---------------------------------------------------------- |
+| `name`            | string   | ✅       | Human-readable client name                                 |
+| `redirect_uris`   | string[] | ✅       | Allowed redirect URIs (must be valid URLs)                 |
+| `allowed_scopes`  | string[] | ✅       | Must include `openid`; may include `email`, `profile`      |
+| `is_confidential` | boolean  | ❌       | Default `true`. Set `false` for public clients (no secret) |
 
 ### Response: 201 Created
 
@@ -116,10 +116,10 @@ curl -X POST https://your-worker.workers.dev/admin/clients \
 
 ### Errors
 
-| Status | `error` | Cause |
-|--------|---------|-------|
-| 400 | `invalid_request` | Missing `openid` scope, invalid redirect URI, missing name |
-| 401 | `unauthorized` | Missing or wrong `x-admin-api-key` |
+| Status | `error`           | Cause                                                      |
+| ------ | ----------------- | ---------------------------------------------------------- |
+| 400    | `invalid_request` | Missing `openid` scope, invalid redirect URI, missing name |
+| 401    | `unauthorized`    | Missing or wrong `x-admin-api-key`                         |
 
 ---
 
@@ -127,20 +127,20 @@ curl -X POST https://your-worker.workers.dev/admin/clients \
 
 The IdP issues the following claims in ID tokens and at the `/userinfo` endpoint based on granted scopes:
 
-| Scope | Claims |
-|-------|--------|
-| `openid` | `sub`, `iss`, `aud`, `exp`, `iat` |
-| `email` | `email`, `email_verified` |
-| `profile` | `name`, `groups` |
+| Scope     | Claims                            |
+| --------- | --------------------------------- |
+| `openid`  | `sub`, `iss`, `aud`, `exp`, `iat` |
+| `email`   | `email`, `email_verified`         |
+| `profile` | `name`, `groups`                  |
 
 ---
 
 ## Scopes
 
-| Scope | Description |
-|-------|-------------|
-| `openid` | **Required.** Base OIDC scope; enables ID token issuance |
-| `email` | Returns `email` and `email_verified` claims |
+| Scope     | Description                                                |
+| --------- | ---------------------------------------------------------- |
+| `openid`  | **Required.** Base OIDC scope; enables ID token issuance   |
+| `email`   | Returns `email` and `email_verified` claims                |
 | `profile` | Returns `name` and `groups` claims from the user's profile |
 
 ---
